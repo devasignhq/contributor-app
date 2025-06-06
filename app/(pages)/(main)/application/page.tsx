@@ -1,22 +1,28 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import ButtonPrimary from "@/app/components/ButtonPrimary";
+import RequestResponseModal from "@/app/components/RequestResponseModal";
 import { TaskDto } from "@/app/models/task.model";
 import { TaskAPI } from "@/app/services/task.service";
 import { ROUTES } from "@/app/utils/data";
 import { formatDate, moneyFormat } from "@/app/utils/helper";
 import { getCurrentUser } from "@/lib/firebase";
-import { useAsyncEffect, useLockFn } from "ahooks";
+import { useAsyncEffect, useLockFn, useToggle } from "ahooks";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { FiArrowUpRight } from "react-icons/fi";
 import { GoDotFill } from "react-icons/go";
+import { RiCodeBoxLine } from "react-icons/ri";
+import { toast } from "react-toastify";
 
 const Application = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [activeTask, setActiveTask] = useState<TaskDto | null>(null);
     const [loadingTask, setLoadingTask] = useState(false);
+    const [submittingApplication, setSubmittingApplication] = useState(false);
+    const [openRequestResponseModal, { toggle: toggleRequestResponseModal }] = useToggle(false);
 
     useAsyncEffect(useLockFn(async () => {
         const taskId = searchParams.get("taskId");
@@ -41,8 +47,32 @@ const Application = () => {
             setLoadingTask(false);
         }
     }), [searchParams]);
+
+    const handleTaskApplication = async () => {
+        if (!activeTask?.id) {
+            toast.error("Task Id not found");
+            return;
+        }
+
+        setSubmittingApplication(true);
+
+        try {
+            await TaskAPI.submitTaskApplication(activeTask.id);
+
+            toggleRequestResponseModal();
+        } catch (error: any) {
+            if (error?.error?.message) {
+                toast.error(error.error.message);
+                return
+            }
+            toast.error("Failed to submit task application. Please Try again.");
+        } finally {
+            setSubmittingApplication(false);
+        }
+    };
     
     return (
+        <>
         <div className="w-[850px] mt-[65px] mx-auto">
             <h1 className="text-display-large text-light-100">Task Bounty</h1>
             {!searchParams.get("taskId") ? (
@@ -109,17 +139,28 @@ const Application = () => {
                     </p>
                     <ButtonPrimary
                         format="SOLID"
-                        text="Apply for Task"
+                        text={submittingApplication ? "Applying..." : "Apply for Task"}
                         sideItem={<FiArrowUpRight />}
-                        attributes={{
-                            onClick: () => {},
-                        }}
+                        attributes={{ onClick: handleTaskApplication }}
                         extendedClassName="bg-light-200"
                     />
                 </div>
                 </>
             )}
         </div>
+
+        {openRequestResponseModal && (
+            <RequestResponseModal 
+                Icon={RiCodeBoxLine}
+                title="Task Proposal Sent"
+                description={`The project maintainer will get your proposal shortly. If accepted, this 
+                    task will be assigned to you alone and bounty paid out upon completion.`}
+                buttonTitle="Go To Tasks Page"
+                // buttonTitle="Go To Bounty Explorer"
+                onButtonClick={() => router.push(ROUTES.TASKS)}
+            />
+        )}
+        </>
     )
 }
  
