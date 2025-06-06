@@ -1,13 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { HiOutlineSelector, HiPlus } from "react-icons/hi";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ROUTES } from "@/app/utils/data";
-import ButtonPrimary from "@/app/components/ButtonPrimary";
-import { FaCheck } from "react-icons/fa6";
-import { ProjectAPI } from "@/app/services/project.service";
-import { useRequest, useLockFn } from "ahooks";
 import { TbLogout } from "react-icons/tb";
 import { useLogoutUser } from "@/lib/firebase";
 import useUserStore from "@/app/state-management/useUserStore";
