@@ -1,21 +1,35 @@
 /* eslint-disable @next/next/no-img-element */
+"use client";
 import ButtonPrimary from "@/app/components/ButtonPrimary";
 import { ErrorResponse } from "@/app/models/_global";
+import { UserDto } from "@/app/models/user.model";
 import { UserAPI } from "@/app/services/user.service";
 import useUserStore from "@/app/state-management/useUserStore";
 import { ROUTES } from "@/app/utils/data";
 import { configureGithubProvider, auth } from "@/lib/firebase";
 import { signInWithPopup, getAdditionalUserInfo } from "@firebase/auth";
 import { useRequest, useLockFn } from "ahooks";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FaGithub } from "react-icons/fa6";
 import { toast } from "react-toastify";
 
-// TODO: Route user to application if taskId is provided
-
 const Account = () => {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { setCurrentUser } = useUserStore();
+
+    const onUserSuccess = (data: UserDto | undefined, username: string) => {
+        if (data) {
+            setCurrentUser({ ...data, username });
+        }
+
+        const taskId = searchParams.get("taskId");
+        if (!taskId) {
+            return router.push(ROUTES.TASKS);
+        }
+        
+        router.push(ROUTES.APPLICATION + `?taskId=${taskId}`);
+    };
 
     const { loading: creatingUser, run: createUser } = useRequest(
         useLockFn((gitHubUsername: string) => UserAPI.createUser({ gitHubUsername })), 
@@ -23,10 +37,7 @@ const Account = () => {
             manual: true,
             onSuccess: (data, params) => {
                 toast.success("User created successfully.");
-                if (data) {
-                    setCurrentUser({ ...data, username: params[0] });
-                }
-                router.push(ROUTES.TASKS);
+                onUserSuccess(data, params[0]);
             },
             onError: () => toast.error("Failed to create user.")
         }
@@ -38,12 +49,7 @@ const Account = () => {
         {
             manual: true,
             cacheKey: "user-object",
-            onSuccess: (data, params) => {
-                if (data) {
-                    setCurrentUser({ ...data, username: params[0] });
-                }
-                router.push(ROUTES.TASKS);
-            },
+            onSuccess: (data, params) => onUserSuccess(data, params[0]),
             onError: (err, params) => {
                 const error = err as unknown as ErrorResponse;
                 if (error.error.name === "NotFoundError") {
