@@ -47,7 +47,7 @@ export function useLogoutUser() {
 
             clearCache("");
             clearStores();
-            router.push(ROUTES.ACCOUNT);
+            router.push(ROUTES.AUTHENTICATE);
         } catch(error) {
             console.log(error)
             alert("Something went wrong. Please try again.");
@@ -65,7 +65,7 @@ export const useUnauthenticatedUserCheck = () => {
         const user = await getCurrentUser();
 
         if (!user) {
-            router.push(ROUTES.ACCOUNT)
+            router.push(ROUTES.AUTHENTICATE)
         }
     }, [router]);
 }
