@@ -118,6 +118,10 @@ const SubmitTaskModal = ({ toggleModal }: SubmitTaskModalProps) => {
                         className="w-full py-2.5 px-[15px] mt-2.5 bg-dark-400 border border-dark-200 text-body-medium text-light-100"
                         disabled={submittingTask}
                     />
+                    <p className="text-body-micro text-light-200 mt-[5px]">
+                        You can add your process documentation link, notion page or any 
+                        other reference that will give more credibility to the work done.
+                    </p>
                 </div>
                 <ButtonPrimary
                     format="SOLID"
