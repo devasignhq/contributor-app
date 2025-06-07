@@ -22,8 +22,8 @@ export class WalletAPI {
         return HttpClient.post<AccountRecord>(ENDPOINTS.WALLET.SWAP, data);
     }
 
-    static async getTransactions(projectId: string, query: QueryTransactionDto) {
+    static async getTransactions(query?: QueryTransactionDto) {
         return HttpClient.get<ItemWithPaginationResponse<"transactions", TransactionDto[]>>(
-            ENDPOINTS.WALLET.TRANSACTIONS.replace("{projectId}", projectId), { params: query });
+            ENDPOINTS.WALLET.TRANSACTIONS, { params: query });
     }
 }

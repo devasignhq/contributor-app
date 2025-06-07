@@ -84,7 +84,7 @@ const TaskOverviewSection = () => {
                         </button>
                     </div>
                 </div>
-                {activeTask?.status !== "IN_PROGRESS" && (
+                {activeTask?.status === "IN_PROGRESS" && (
                     <ButtonPrimary
                         format="SOLID"
                         text="Submit Task"

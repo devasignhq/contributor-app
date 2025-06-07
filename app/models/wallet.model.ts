@@ -26,6 +26,8 @@ export type TransactionDto = {
     assetTo: string | null
     projectId: string
     userId: string
+    createdAt: string
+    updatedAt: string
     
     task?: TaskDto | null
     project?: ProjectDto
