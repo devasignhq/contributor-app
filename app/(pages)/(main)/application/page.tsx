@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import ButtonPrimary from "@/app/components/ButtonPrimary";
 import RequestResponseModal from "@/app/components/RequestResponseModal";

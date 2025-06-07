@@ -92,7 +92,7 @@ export type ReplyTimelineExtensionRequestDto = {
 
 export type MarkAsCompleteDto = {
     pullRequest: string
-    videoUrl: string
+    attachmentUrl: string
 }
 
 export type QueryTaskDto = {
