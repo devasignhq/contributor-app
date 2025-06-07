@@ -13,7 +13,7 @@ const TaskCard = ({ task, active, onClick }: TaskCardProps) => {
         <div 
             onClick={onClick}
             role="button"
-            className={`w-full p-[15px] border space-y-2.5 cursor-pointer 
+            className={`w-full p-[15px] border cursor-pointer 
                 ${active 
                     ? "bg-dark-400 border-light-100" 
                     : "border-primary-200 hover:border-dark-200 hover:bg-dark-400"}
@@ -34,7 +34,7 @@ const TaskCard = ({ task, active, onClick }: TaskCardProps) => {
                 <p className="text-body-medium text-primary-400 font-bold ml-auto">{moneyFormat(task.bounty)} USDC</p>
             </div>
             <p 
-                className="text-body-medium text-light-100 overflow-hidden leading-5"
+                className="text-body-medium text-light-100 overflow-hidden leading-5 mt-2.5"
                 style={{
                     display: '-webkit-box',
                     WebkitLineClamp: 2,
@@ -45,8 +45,8 @@ const TaskCard = ({ task, active, onClick }: TaskCardProps) => {
             >
                 {task.issue.title}
             </p>
-            <div className="flex items-center justify-between">
-                <p className="text-body-tiny font-bold text-light-200 mt-[15px] truncate">
+            <div className="flex items-end justify-between mt-[15px]">
+                <p className="text-body-tiny font-bold text-light-200 truncate">
                     {task.project?.name}
                 </p>
                 {!active && (

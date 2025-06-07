@@ -12,6 +12,7 @@ import { FiFilePlus } from "react-icons/fi";
 import { useCustomSearchParams } from "@/app/utils/hooks";
 import { Data } from "ahooks/lib/useInfiniteScroll/types";
 import TaskCard from "./components/TaskCard";
+import { HiOutlineRefresh } from "react-icons/hi";
 
 export const ActiveTaskContext = createContext<{
     activeTask: TaskDto | null;
@@ -29,7 +30,8 @@ const Tasks = () => {
         loading: loadingTasks,
         loadingMore: loadingMoreTasks,
         noMore: noMoreTasks,
-        loadMore: loadMoreTasks
+        loadMore: loadMoreTasks,
+        reload: reloadTasks,
     } = useInfiniteScroll<Data>(
         async (currentData) => {
             const pageToLoad = currentData ? currentData.pagination.page + 1 : 1;
@@ -81,7 +83,7 @@ const Tasks = () => {
             <ActiveTaskContext.Provider value={{ activeTask, setActiveTask }}>
                 {(tasks?.list && tasks.list.length < 1 && !loadingTasks) ? (
                     <div className="grow grid place-content-center">
-                        <div className="min-w-[336px] w-[10%]">
+                        <div className="min-w-[336px] w-[10%] mx-auto">
                             <FiFilePlus className="text-[44px] text-primary-400 mx-auto" />
                             <h2 className="text-headline-medium text-light-100 my-2.5 text-center">
                                 No Active Task
@@ -103,7 +105,16 @@ const Tasks = () => {
                 ): (
                     <>
                         <section className="min-w-[366px] w-[12%] h-full flex flex-col">
-                            <h3 className="py-[30px] pr-5 text-headline-small text-light-100 ">Active Tasks</h3>
+                            <div className="py-[30px] pr-5 flex items-center justify-between">
+                                <h3 className="text-headline-small text-light-100 ">Active Tasks</h3>
+                                <button 
+                                    onClick={reloadTasks}
+                                    disabled={loadingTasks || loadingMoreTasks}
+                                    className={(loadingTasks || loadingMoreTasks) ? "rotate-loading" : ""}
+                                >
+                                    <HiOutlineRefresh className="text-2xl text-light-200 hover:text-light-100" />
+                                </button>
+                            </div>
                             <div className="grow pr-5 pb-5 overflow-y-auto space-y-[15px]">
                                 {tasks?.list?.map((task) => (
                                     <TaskCard
@@ -118,7 +129,7 @@ const Tasks = () => {
                                         <span className="text-body-medium text-light-100">No tasks found</span>
                                     </div>
                                 )}
-                                {loadingTasks && (
+                                {(loadingTasks && tasks?.list && tasks.list.length < 1) && (
                                     <div className="flex justify-center py-4">
                                         <span className="text-body-medium text-light-100">Loading tasks...</span>
                                     </div>
