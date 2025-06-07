@@ -80,7 +80,7 @@ const Application = () => {
                 <p className="text-body-medium text-light-100 mt-10">Task not found</p>
             )}
 
-            {loadingTask && (
+            {(loadingTask && activeTask) && (
                 <p className="text-body-medium text-light-100 mt-10">Loading Task...</p>
             )}
 
@@ -101,7 +101,7 @@ const Application = () => {
                     <section className="w-full space-y-2.5">
                         <div className="w-full flex justify-between gap-2.5 text-headline-small">
                             <h5 className="text-light-100 truncate">{activeTask.issue.title}</h5>
-                            <p className="text-primary-400">
+                            <p className="text-primary-400 whitespace-nowrap">
                                 {activeTask.timeline} {activeTask.timelineType?.toLowerCase()}(s)
                             </p>
                         </div>
