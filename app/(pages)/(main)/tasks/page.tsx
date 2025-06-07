@@ -13,7 +13,10 @@ import { useCustomSearchParams } from "@/app/utils/hooks";
 import { Data } from "ahooks/lib/useInfiniteScroll/types";
 import TaskCard from "./components/TaskCard";
 
-export const ActiveTaskContext = createContext<TaskDto | null>(null);
+export const ActiveTaskContext = createContext<{
+    activeTask: TaskDto | null;
+    setActiveTask: React.Dispatch<React.SetStateAction<TaskDto | null>>
+}>({} as any);
 
 const Tasks = () => {
     const router = useRouter();
@@ -75,7 +78,7 @@ const Tasks = () => {
 
     return (
         <div className="h-[calc(100dvh-123px)] flex">
-            <ActiveTaskContext.Provider value={activeTask}>
+            <ActiveTaskContext.Provider value={{ activeTask, setActiveTask }}>
                 {(tasks?.list && tasks.list.length < 1 && !loadingTasks) ? (
                     <div className="grow grid place-content-center">
                         <div className="min-w-[336px] w-[10%]">

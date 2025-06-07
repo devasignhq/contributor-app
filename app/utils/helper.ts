@@ -1,3 +1,5 @@
+import { TaskStatus } from "../models/task.model";
+
 export function formatDateTime(isoString: string): string {
     const date = new Date(isoString);
     return date.toLocaleDateString('en-GB', { 
@@ -84,4 +86,17 @@ export function convertGitHubApiUrlToWebUrlRegex(apiUrl: string): string {
     }
     
     return `https://github.com/${match[1]}`;
+}
+
+export function taskStatusFormatter(status: TaskStatus) {
+    switch (status) {
+        case "IN_PROGRESS":
+            return ["In Progress", "bg-indicator-300 text-dark-500"];
+        case "MARKED_AS_COMPLETED":
+            return ["Submitted", "bg-primary-100 text-dark-500"];
+        case "COMPLETED":
+            return ["Completed", "bg-indicator-100 text-dark-500"];
+        default:
+            return status;
+    }
 }

@@ -4,11 +4,13 @@ import {
     CreateTaskDto,
     FilterTasks,
     MarkAsCompleteDto,
+    QueryTaskActivityDto,
     QueryTaskDto,
     ReplyTimelineExtensionRequestDto,
     RequestTimelineExtensionDto,
+    TaskActivity,
     TaskDto,
-    TimelineExtensionesponse,
+    TimelineExtensionResponse,
     UpdateTaskBountyDto,
 } from "../models/task.model";
 import { AddCommentDto, CommentDto, UpdateCommentDto } from "../models/comment.model";
@@ -21,6 +23,11 @@ export class TaskAPI {
 
     static async getTaskById(taskId: string) {
         return HttpClient.get<TaskDto>(ENDPOINTS.TASK.GET_BY_ID.replace("{taskId}", taskId));
+    }
+
+    static async getTaskActivities(taskId: string, query?: QueryTaskActivityDto) {
+        return HttpClient.get<PaginatedResponse<TaskActivity>>(
+            ENDPOINTS.TASK.GET_ACTIVITIES.replace("{taskId}", taskId), { params: query });
     }
 
     static async createTask(data: { payload: CreateTaskDto }) {
@@ -53,11 +60,11 @@ export class TaskAPI {
     }
 
     static async requestTimelineModification(taskId: string, data: RequestTimelineExtensionDto) {
-        return HttpClient.post<TimelineExtensionesponse>(ENDPOINTS.TASK.REQUEST_TIMELINE_MODIFICATION.replace("{taskId}", taskId), data);
+        return HttpClient.post<TimelineExtensionResponse>(ENDPOINTS.TASK.REQUEST_TIMELINE_MODIFICATION.replace("{taskId}", taskId), data);
     }
 
     static async replyTimelineModification(taskId: string, data: ReplyTimelineExtensionRequestDto) {
-        return HttpClient.post<TimelineExtensionesponse>(ENDPOINTS.TASK.REPLY_TIMELINE_MODIFICATION.replace("{taskId}", taskId), data);
+        return HttpClient.post<TimelineExtensionResponse>(ENDPOINTS.TASK.REPLY_TIMELINE_MODIFICATION.replace("{taskId}", taskId), data);
     }
 
     static async addTaskComment(taskId: string, data: AddCommentDto) {

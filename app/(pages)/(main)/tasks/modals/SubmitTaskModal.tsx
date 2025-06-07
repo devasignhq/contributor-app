@@ -27,14 +27,19 @@ type SubmitTaskModalProps = {
 };
 
 const SubmitTaskModal = ({ toggleModal }: SubmitTaskModalProps) => {
-    const activeTask = useContext(ActiveTaskContext);
+    const { activeTask, setActiveTask } = useContext(ActiveTaskContext);
     const [openRequestResponseModal, { toggle: toggleRequestResponseModal }] = useToggle(false);
 
     const { loading: submittingTask, run: submitTask } = useRequest(
         useLockFn((data: MarkAsCompleteDto) => TaskAPI.markAsComplete(activeTask!.id, data)), 
         {
             manual: true,
-            onSuccess: toggleRequestResponseModal,
+            onSuccess: (data) => {
+                if (data) {
+                    setActiveTask({ ...activeTask!, ...data})
+                }
+                toggleRequestResponseModal();
+            },
             onError: (error: any) => {
                 if (error?.error?.message) {
                     toast.error(error.error.message);

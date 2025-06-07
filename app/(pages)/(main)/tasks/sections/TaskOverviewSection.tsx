@@ -1,27 +1,61 @@
 "use client";
 import ButtonPrimary from "@/app/components/ButtonPrimary";
 import { FiArrowRight, FiArrowUpRight } from "react-icons/fi";
-import TaskActivityCard from "../components/TaskActivityCard";
+// import TaskActivityCard from "../components/TaskActivityCard";
 import Link from "next/link";
-import { useToggle } from "ahooks";
+import { useInfiniteScroll, useToggle } from "ahooks";
 import SubmitTaskModal from "../modals/SubmitTaskModal";
 import RequestTimeExtensionModal from "../modals/RequestTimeExtensionModal";
 import { useContext } from "react";
 import { ActiveTaskContext } from "../page";
-import { moneyFormat } from "@/app/utils/helper";
+import { moneyFormat, taskStatusFormatter } from "@/app/utils/helper";
 import { TaskDto, TIMELINE_TYPE } from "@/app/models/task.model";
 import { FaRegClock } from "react-icons/fa6";
+import { Data } from "ahooks/lib/useInfiniteScroll/types";
+import { TaskAPI } from "@/app/services/task.service";
+import { HiOutlineRefresh } from "react-icons/hi";
 
 const TaskOverviewSection = () => {
-    const activeTask = useContext(ActiveTaskContext);
+    const { activeTask } = useContext(ActiveTaskContext);
     const [openSubmitTaskModal, { toggle: toggleSubmitTaskModal }] = useToggle(false);
     const [openRequestTimeExtensionModal, { toggle: toggleRequestTimeExtensionModal }] = useToggle(false);
+    
+    const {
+        data: activities,
+        loading: loadingActivities,
+        loadingMore: loadingMoreActivities,
+        noMore: noMoreActivities,
+        loadMore: loadMoreActivities,
+        reload: reloadActivities,
+    } = useInfiniteScroll<Data>(
+        async (currentData) => {
+            const pageToLoad = currentData ? currentData.pagination.page + 1 : 1;
+            
+            const response = await TaskAPI.getTaskActivities(
+                activeTask!.id,
+                { page: pageToLoad, limit: 30 }
+            );
+
+            return { 
+                list: response.data,
+                pagination: response.pagination,
+            };
+        }, {
+            isNoMore: (data) => !data?.pagination.hasMore,
+            reloadDeps: [activeTask]
+        }
+    );
 
     return (
         <>
         <section className="min-w-[360px] w-[12%] h-full pt-[30px] flex flex-col">
             <div className="pl-5 pb-[30px] space-y-[30px] border-b border-dark-200">
-                <h6 className="text-headline-small text-light-100">Overview</h6>
+                <div className="flex items-center justify-between">
+                    <h6 className="text-headline-small text-light-100">Overview</h6>
+                    <p className={`w-fit py-0.5 px-[7px] text-body-tiny font-bold ${taskStatusFormatter(activeTask!.status)[1]}`}>
+                        {taskStatusFormatter(activeTask!.status)[0]}
+                    </p>
+                </div>
                 {activeTask?.status !== "OPEN" && (
                     <div className="space-y-2.5">
                         <p className="text-body-tiny text-light-100">Project</p>
@@ -50,24 +84,51 @@ const TaskOverviewSection = () => {
                         </button>
                     </div>
                 </div>
-                <ButtonPrimary
-                    format="SOLID"
-                    text="Submit Task"
-                    sideItem={<FiArrowRight />}
-                    attributes={{ onClick: toggleSubmitTaskModal }}
-                />
+                {activeTask?.status !== "IN_PROGRESS" && (
+                    <ButtonPrimary
+                        format="SOLID"
+                        text="Submit Task"
+                        sideItem={<FiArrowRight />}
+                        attributes={{ onClick: toggleSubmitTaskModal }}
+                    />
+                )}
             </div>
-            <h6 className="pt-[30px] pl-5 text-headline-small text-light-100">Activities</h6>
+            <div className="pt-[30px] pl-5 flex items-center justify-between">
+                <h6 className="text-headline-small text-light-100">Activities</h6>
+                <button 
+                    onClick={reloadActivities}
+                    disabled={loadingActivities || loadingMoreActivities}
+                    className={(loadingActivities || loadingMoreActivities) ? "rotate-loading" : ""}
+                >
+                    <HiOutlineRefresh className="text-2xl text-light-200 hover:text-light-100" />
+                </button>
+            </div>
             <div className="pl-5 pb-5 mt-[30px] overflow-y-auto space-y-[15px]">
-                {sampleTaskActivities.map((activity) => (
+                {/* {activities?.list?.map((activity) => (
                     <TaskActivityCard
                         key={activity.id}
-                        issueNumber={activity.issueNumber}
-                        activityTitle={activity.activityTitle}
-                        issueUrl={activity.issueUrl}
-                        onClick={() => window.open(`https://${activity.issueUrl}`, '_blank')}
+                        issueNumber={activeTask!.issue.number}
+                        activity={activity}
+                        issueUrl={activeTask!.issue.url}
                     />
-                ))}
+                ))} */}
+                {(!loadingActivities) && (
+                    <p className="text-body-medium text-light-100">No activity to show</p>
+                )}
+                {(loadingActivities && activities?.list && activities.list.length < 1) && (
+                    <p className="text-body-medium text-light-100">Loading activities...</p>
+                )}
+                {loadingMoreActivities && (
+                    <p className="text-body-medium text-light-100">Loading more activities...</p>
+                )}
+                {(!loadingMoreActivities && !noMoreActivities) && (
+                    <button 
+                        className="text-body-medium text-light-200 font-bold hover:text-light-100 pt-2.5"
+                        onClick={loadMoreActivities}
+                    >
+                        Load More
+                    </button>
+                )}
             </div>
         </section>
         
@@ -78,66 +139,6 @@ const TaskOverviewSection = () => {
 }
  
 export default TaskOverviewSection;
-
-type TaskActivity = {
-    id: string;
-    issueNumber: number;
-    activityTitle: string;
-    issueUrl: string;
-    timestamp: string;
-};
-
-const sampleTaskActivities: TaskActivity[] = [
-    {
-        id: "1",
-        issueNumber: 42,
-        activityTitle: "Bounty increased to $200",
-        issueUrl: "github.com/DevAsign/app-pm/issues/42",
-        timestamp: "2024-05-02T10:30:00Z"
-    },
-    {
-        id: "2",
-        issueNumber: 42,
-        activityTitle: "New comment added by @sarah_dev",
-        issueUrl: "github.com/DevAsign/app-pm/issues/42#comment-1",
-        timestamp: "2024-05-02T09:15:00Z"
-    },
-    {
-        id: "3",
-        issueNumber: 42,
-        activityTitle: "Pull request submitted for review",
-        issueUrl: "github.com/DevAsign/app-pm/pull/45",
-        timestamp: "2024-05-02T08:45:00Z"
-    },
-    {
-        id: "4",
-        issueNumber: 42,
-        activityTitle: "Task assigned to @lenny_malcolm",
-        issueUrl: "github.com/DevAsign/app-pm/issues/42",
-        timestamp: "2024-05-01T16:20:00Z"
-    },
-    {
-        id: "5",
-        issueNumber: 42,
-        activityTitle: "Task created with $150 bounty",
-        issueUrl: "github.com/DevAsign/app-pm/issues/42",
-        timestamp: "2024-05-01T15:00:00Z"
-    },
-    {
-        id: "6",
-        issueNumber: 42,
-        activityTitle: "Task closed by @lenny_malcolm",
-        issueUrl: "github.com/DevAsign/app-pm/issues/42",
-        timestamp: "2024-05-01T14:00:00Z"
-    },
-    {
-        id: "7",
-        issueNumber: 42,
-        activityTitle: "Task reopened by @sarah_dev",
-        issueUrl: "github.com/DevAsign/app-pm/issues/42",
-        timestamp: "2024-05-01T13:00:00Z"
-    }
-];
 
 /**
  * Calculates the time left for a task based on its timeline, timelineType, and acceptedAt date
