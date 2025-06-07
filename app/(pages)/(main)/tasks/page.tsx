@@ -34,6 +34,7 @@ const Tasks = () => {
             const response = await TaskAPI.getTasks(
                 { 
                     role: "contributor", 
+                    detailed: true, // TODO: Remove and select what to show based on role (backend)
                     page: pageToLoad,
                     limit: 30,
                 },
