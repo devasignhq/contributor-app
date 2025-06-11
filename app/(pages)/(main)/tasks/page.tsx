@@ -150,7 +150,7 @@ const Tasks = () => {
                             </div>
                         </section>
 
-                        {(loadingTask || loadingTasks) && (
+                        {((loadingTask || loadingTasks) && !activeTask) && (
                             <section className="grow border-l border-dark-200 grid place-content-center">
                                 <p className="text-body-medium text-light-100">
                                     {loadingTask ? "Loading task..." : "Waiting for active tasks to load..."}
