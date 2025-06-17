@@ -6,12 +6,14 @@ import { UserDto } from "@/app/models/user.model";
 import { UserAPI } from "@/app/services/user.service";
 import useUserStore from "@/app/state-management/useUserStore";
 import { ROUTES } from "@/app/utils/data";
-import { configureGithubProvider, auth } from "@/lib/firebase";
-import { signInWithPopup, getAdditionalUserInfo } from "@firebase/auth";
+import { auth } from "@/lib/firebase";
+import { signInWithPopup, getAdditionalUserInfo, GithubAuthProvider } from "@firebase/auth";
 import { useRequest, useLockFn } from "ahooks";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FaGithub } from "react-icons/fa6";
 import { toast } from "react-toastify";
+
+export const githubProvider = new GithubAuthProvider();
 
 const Account = () => {
     const router = useRouter();
@@ -61,7 +63,6 @@ const Account = () => {
 
     const handleGitHubAuth = async () => {
         try {
-            const githubProvider = configureGithubProvider();
             const result = await signInWithPopup(auth, githubProvider);
             const additionalInfo = getAdditionalUserInfo(result);
             getUser(additionalInfo!.username!);
