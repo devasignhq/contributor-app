@@ -1,6 +1,5 @@
 import { BalanceLineAsset } from "./horizon.model"
-import { UserProjectPermissionDto } from "./permission.model"
-import { ProjectDto } from "./project.model"
+import { InstallationDto } from "./installation.model"
 import { TaskDto, TaskSubmission } from "./task.model"
 import { TransactionDto } from "./wallet.model"
 
@@ -11,13 +10,13 @@ export type UserDto = {
     addressBook: AddressBook[]
     createdAt: string
     updatedAt: string
+    _count?: { installations: number }
 
     contributionSummary?: ContributionSummary | null
     assets?: BalanceLineAsset[]
     createdTasks?: TaskDto[]
     contributedTasks?: TaskDto[]
-    projects?: ProjectDto[]
-    userProjectPermissions?: UserProjectPermissionDto[]
+    installations?: InstallationDto[]
     transactions?: TransactionDto[]
     tasksAppliedFor?: TaskDto[]
     taskSubmissions?: TaskSubmission[]

@@ -1,4 +1,4 @@
-export type Repository = {
+export type RepositoryDto = {
     id: number;
     node_id: string;
     name: string;
@@ -13,6 +13,7 @@ export type IssueDto = {
     id: number;
     node_id: string;
     url: string;
+    html_url: string;
     repository_url: string;
     number: number;
     state: string;
@@ -28,7 +29,7 @@ export type IssueDto = {
     active_lock_reason?: string | null;
     comments: number;
     pull_request?: IssuePullRequest;
-    repository?: Repository;
+    repository?: RepositoryDto;
     closed_at: string | null;
     created_at: string;
     updated_at: string;
@@ -93,11 +94,4 @@ export type GitHubUser = {
     type: string;
     site_admin: boolean;
     starred_at?: string | undefined;
-}
-
-export class IssueFilters {
-    labels?: string[];
-    milestone?: string | "none" | "*";
-    sort?: "created" | "updated" | "comments" = "created";
-    direction?: "asc" | "desc" = "desc";
 }

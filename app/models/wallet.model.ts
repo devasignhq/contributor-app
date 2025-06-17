@@ -1,14 +1,16 @@
-import { ProjectDto } from "./project.model"
+import { InstallationDto } from "./installation.model"
 import { TaskDto } from "./task.model"
 import { UserDto } from "./user.model"
 
 export type WithdrawAssetDto = {
+    installationId: string
     walletAddress: string
     amount: string
     assetType: "XLM" | "USDC"
 }
 
 export type SwapAssetDto = {
+    installationId: string
     amount: string
     toAssetType: "XLM" | "USDC"
 }
@@ -25,13 +27,13 @@ export type TransactionDto = {
     asset: string | null
     assetFrom: string | null
     assetTo: string | null
-    projectId: string
+    installationId: string
     userId: string
     createdAt: string
     updatedAt: string
     
     task?: TaskDto | null
-    project?: ProjectDto
+    installation?: InstallationDto
     user?: UserDto
 }
 

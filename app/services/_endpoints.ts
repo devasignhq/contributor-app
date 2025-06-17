@@ -1,6 +1,6 @@
 const preset = {
     USER: "/users",
-    PROJECT: "/projects",
+    INSTALLATION: "/installations",
     TASK: "/tasks",
     WALLET: "/wallet",
 };
@@ -12,22 +12,6 @@ export const ENDPOINTS = {
         UPDATE_USERNAME: preset.USER + "/username",
         ADDRESS_BOOK: preset.USER + "/address-book",
     },
-    PROJECT: {
-        GET_ALL: preset.PROJECT + "",
-        GET_BY_ID: preset.PROJECT + "/{projectId}",
-        CREATE: preset.PROJECT + "",
-        UPDATE: preset.PROJECT + "/{projectId}",
-        CONNECT_REPO: preset.PROJECT + "/{projectId}/connect-repo",
-        DELETE: preset.PROJECT + "/{projectId}",
-
-        ADD_TEAM_MEMBER: preset.PROJECT + "/{projectId}/team",
-        UPDATE_TEAM_MEMBER: preset.PROJECT + "/{projectId}/team/{userId}",
-        REMOVE_TEAM_MEMBER: preset.PROJECT + "/{projectId}/team/{userId}",
-
-        ISSUES: preset.PROJECT + "/issues",
-        LABELS: preset.PROJECT + "/labels",
-        MILESTONES: preset.PROJECT + "/milestones",
-    },
     TASK: {
         GET_ALL: preset.TASK + "",
         GET_BY_ID: preset.TASK + "/{taskId}",
@@ -38,7 +22,7 @@ export const ENDPOINTS = {
         DELETE: preset.TASK + "/{taskId}",
         
         SUBMIT_APPLICATION: preset.TASK + "/{taskId}/apply",
-        ACCEPT_APPLICATION: preset.TASK + "/{taskId}/accept/{userId}",
+        ACCEPT_APPLICATION: preset.TASK + "/{taskId}/accept/{contributorId}",
         MARK_AS_COMPLETE: preset.TASK + "/{taskId}/complete",
         VALIDATE_COMPLETION: preset.TASK + "/{taskId}/validate",
 
