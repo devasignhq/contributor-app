@@ -21,7 +21,7 @@ const BountyTable = ({
     loadMore
 }: BountyTableProps) => {
     const { currentUser } = useUserStore();
-    
+
     return (
         <>
             <thead>

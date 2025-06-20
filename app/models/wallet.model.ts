@@ -1,17 +1,15 @@
-import { InstallationDto } from "./installation.model"
 import { TaskDto } from "./task.model"
 import { UserDto } from "./user.model"
 
 export type WithdrawAssetDto = {
-    installationId: string
     walletAddress: string
     amount: string
     assetType: "XLM" | "USDC"
 }
 
 export type SwapAssetDto = {
-    installationId: string
     amount: string
+    equivalentAmount: string
     toAssetType: "XLM" | "USDC"
 }
 
@@ -27,20 +25,20 @@ export type TransactionDto = {
     asset: string | null
     assetFrom: string | null
     assetTo: string | null
-    installationId: string
+    fromAmount: number | null
+    toAmount: number | null
     userId: string
     createdAt: string
     updatedAt: string
     
     task?: TaskDto | null
-    installation?: InstallationDto
     user?: UserDto
 }
 
 export type AllTransationsDto = Pick<TransactionDto, "id" | "category" | "amount" | "doneAt">
 export type BountyTransationsDto = Pick<TransactionDto, "id" | "category" | "amount" | "doneAt" | "task">
 export type TopUpTransationsDto = Pick<TransactionDto, "id" | "category" | "amount" | "doneAt" | "sourceAddress" | "asset">
-export type SwapTransationsDto = Pick<TransactionDto, "id" | "category" | "amount" | "doneAt" | "assetFrom" | "assetTo">
+export type SwapTransationsDto = Pick<TransactionDto, "id" | "category" | "amount" | "doneAt" | "assetFrom" | "assetTo" | "fromAmount" | "toAmount">
 export type WithdrawalTransationsDto = Pick<TransactionDto, "id" | "category" | "amount" | "doneAt" | "destinationAddress" | "asset">
 
 export const TRANSACTION_CATEGORY = {
