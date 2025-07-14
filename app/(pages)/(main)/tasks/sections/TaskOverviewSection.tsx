@@ -60,8 +60,8 @@ const TaskOverviewSection = () => {
                     <div className="space-y-2.5">
                         <p className="text-body-tiny text-light-100">Project</p>
                         <div className="flex items-center gap-1">
-                            <p className="text-body-large text-light-200">{activeTask?.project?.name}</p>
-                            <Link href={`https://github.com/${activeTask?.project?.name}`} target="_blank">
+                            <p className="text-body-large text-light-200">{activeTask?.issue?.url.split("/").slice(-3)[0]}</p>
+                            <Link href={`https://github.com/${activeTask?.issue?.url.split("/").slice(-3)[0]}`} target="_blank">
                                 <FiArrowUpRight className="text-2xl text-primary-100 hover:text-light-100" />
                             </Link>
                         </div>

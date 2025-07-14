@@ -113,8 +113,7 @@ const SwapAssetModal = ({
     return (
         <PopupModalLayout title="Swap Asset" toggleModal={toggleModal}>
             <p className="mt-2.5 text-body-medium text-dark-100">
-                Swap tokens across the same project wallet. USDC is used to fund 
-                task bounties, while XLM is for top-up and withdrawal.
+                Swap tokens across wallet. Only XLM balance can be withdrawn.
             </p>
             <form className="w-full" onSubmit={formik.handleSubmit}>
                 {from === "XLM" ? (

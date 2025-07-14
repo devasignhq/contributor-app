@@ -34,7 +34,7 @@ const Wallet = () => {
     };
         
     const {
-        data: projectTransactions,
+        data: transactions,
         loading: loadingTransactions,
         loadingMore: loadingMoreTransactions,
         noMore: noMoreTransactions,
@@ -143,7 +143,7 @@ const Wallet = () => {
             </section>
             {activeTab.enum === "ALL" && (
                 <AllTable 
-                    data={loadingTransactions ? [] : (projectTransactions?.list || [])}
+                    data={loadingTransactions ? [] : (transactions?.list || [])}
                     loading={loadingTransactions}
                     loadingMore={loadingMoreTransactions}
                     noMore={noMoreTransactions}
@@ -152,7 +152,7 @@ const Wallet = () => {
             )}
             {activeTab.enum === "BOUNTY" && (
                 <BountyTable 
-                    data={loadingTransactions ? [] : (projectTransactions?.list || [])}
+                    data={loadingTransactions ? [] : (transactions?.list || [])}
                     loading={loadingTransactions}
                     loadingMore={loadingMoreTransactions}
                     noMore={noMoreTransactions}
@@ -161,7 +161,7 @@ const Wallet = () => {
             )}
             {activeTab.enum === "TOP_UP" && (
                 <TopUpTable 
-                    data={loadingTransactions ? [] : (projectTransactions?.list || [])}
+                    data={loadingTransactions ? [] : (transactions?.list || [])}
                     loading={loadingTransactions}
                     loadingMore={loadingMoreTransactions}
                     noMore={noMoreTransactions}
@@ -170,7 +170,7 @@ const Wallet = () => {
             )}
             {activeTab.enum === "SWAP" && (
                 <SwapTable 
-                    data={loadingTransactions ? [] : (projectTransactions?.list || [])}
+                    data={loadingTransactions ? [] : (transactions?.list || [])}
                     loading={loadingTransactions}
                     loadingMore={loadingMoreTransactions}
                     noMore={noMoreTransactions}
@@ -179,7 +179,7 @@ const Wallet = () => {
             )}
             {activeTab.enum === "WITHDRAWAL" && (
                 <WithdrawalTable 
-                    data={loadingTransactions ? [] : (projectTransactions?.list || [])}
+                    data={loadingTransactions ? [] : (transactions?.list || [])}
                     loading={loadingTransactions}
                     loadingMore={loadingMoreTransactions}
                     noMore={noMoreTransactions}

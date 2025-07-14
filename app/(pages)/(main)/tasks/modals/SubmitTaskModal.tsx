@@ -81,7 +81,7 @@ const SubmitTaskModal = ({ toggleModal }: SubmitTaskModalProps) => {
                             </p>
                         )}
                         <p className="text-body-tiny text-light-200 truncate">
-                            {activeTask?.project?.name}
+                            {activeTask?.issue?.url.split("/").slice(-3)[0]}
                         </p>
                     </div>
                 </div>
