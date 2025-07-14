@@ -1,4 +1,4 @@
-import { CommentDto } from "./message.model"
+import { MessageDto } from "./message.model"
 import { IssueDto } from "./github.model"
 import { InstallationDto } from "./installation.model"
 import { UserDto } from "./user.model"
@@ -92,6 +92,7 @@ export type UpdateTaskBountyDto = {
 }
 
 export type RequestTimelineExtensionDto = {
+    githubUsername: string 
     requestedTimeline: number 
     timelineType: TimelineType
     reason: string 
@@ -133,6 +134,6 @@ export type FilterTasks = {
 }
 
 export type TimelineExtensionResponse = {
-    comment: CommentDto;
+    Message: MessageDto;
     task?: Pick<TaskDto, "timeline" | "timelineType" | "status" | "updatedAt">;
 }

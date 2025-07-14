@@ -7,10 +7,10 @@ import { useRequest, useLockFn, useToggle } from "ahooks";
 import { useContext } from "react";
 import { FiArrowUpRight, FiCode } from "react-icons/fi";
 import { useFormik } from 'formik';
-import { toast } from "react-toastify";
 import { object, string } from 'yup';
 import { ActiveTaskContext } from "../page";
 import RequestResponseModal from "@/app/components/RequestResponseModal";
+import { handleApiError } from "@/app/utils/helper";
 
 const taskSchema = object({
     pullRequest: string()
@@ -41,11 +41,7 @@ const SubmitTaskModal = ({ toggleModal }: SubmitTaskModalProps) => {
                 toggleRequestResponseModal();
             },
             onError: (error: any) => {
-                if (error?.error?.message) {
-                    toast.error(error.error.message);
-                    return
-                }
-                toast.error("Failed to submit task. Please try again.");
+                handleApiError(error, "Failed to submit task. Please try again.");
             }
         }
     );
