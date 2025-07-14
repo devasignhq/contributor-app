@@ -1,5 +1,5 @@
 import { MessageDto } from "@/app/models/message.model";
-import { getTaskMessages, listenToTaskMessages } from "@/app/services/message.service";
+import { getTaskMessages, listenToExtensionRequests, listenToTaskMessages } from "@/app/services/message.service";
 import { useState, useEffect, useMemo, useRef } from "react";
 
 export interface GroupedMessages {
@@ -21,7 +21,8 @@ export const useManageMessages = (taskId: string, creatorId: string) => {
     useEffect(() => {
         if (!taskId) return;
 
-        let unsubscribe: (() => void) | null = null;
+        let unsubscribeFromTaskMessages: (() => void) | null = null;
+        let unsubscribeFromExtensionRequests: (() => void) | null = null;
         
         const initializeMessages = async () => {
             try {
@@ -31,10 +32,15 @@ export const useManageMessages = (taskId: string, creatorId: string) => {
 
                 if (!creatorId) return;
 
-                unsubscribe = listenToTaskMessages(
+                unsubscribeFromTaskMessages = listenToTaskMessages(
                     taskId, 
                     creatorId, 
                     (getLastContributorMessage(messages, creatorId)?.createdAt)?.toDate().toISOString() || "", 
+                    (updatedMessages) => setMessages(prev => [...prev, ...updatedMessages])
+                );
+                unsubscribeFromExtensionRequests = listenToExtensionRequests(
+                    taskId, 
+                    creatorId, 
                     (updatedMessages) => setMessages(prev => [...prev, ...updatedMessages])
                 );
             } catch (error) {
@@ -46,9 +52,8 @@ export const useManageMessages = (taskId: string, creatorId: string) => {
         initializeMessages();
 
         return () => {
-            if (unsubscribe) {
-                unsubscribe();
-            }
+            if (unsubscribeFromTaskMessages) unsubscribeFromTaskMessages();
+            if (unsubscribeFromExtensionRequests) unsubscribeFromExtensionRequests();
         };
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [creatorId, taskId]);

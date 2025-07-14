@@ -22,7 +22,7 @@ const ConversationSection = () => {
         orderedDateLabels,
         loadingInitialMessages,
         setMessages
-    } = useManageMessages(activeTask!.id, activeTask!.contributor?.userId || "");
+    } = useManageMessages(activeTask!.id, activeTask!.creator?.userId || "");
 
     const adjustHeight = () => {
         const textarea = textareaRef.current;
