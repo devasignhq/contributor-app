@@ -1,3 +1,4 @@
+"use client";
 import { MessageDto, MessageType } from "@/app/models/message.model";
 import useUserStore from "@/app/state-management/useUserStore";
 import { formatTime } from "@/app/utils/helper";

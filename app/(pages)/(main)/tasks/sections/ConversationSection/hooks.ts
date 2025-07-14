@@ -1,5 +1,6 @@
 import { MessageDto } from "@/app/models/message.model";
 import { getTaskMessages, listenToExtensionRequests, listenToTaskMessages } from "@/app/services/message.service";
+import useUserStore from "@/app/state-management/useUserStore";
 import { useState, useEffect, useMemo, useRef } from "react";
 
 export interface GroupedMessages {
@@ -7,6 +8,7 @@ export interface GroupedMessages {
 }
 
 export const useManageMessages = (taskId: string, creatorId: string) => {
+    const { currentUser } = useUserStore();
     const messageBoxRef = useRef<HTMLDivElement>(null);
     const [messages, setMessages] = useState<MessageDto[]>([]);
     const [loading, setLoading] = useState(true);
@@ -40,7 +42,7 @@ export const useManageMessages = (taskId: string, creatorId: string) => {
                 );
                 unsubscribeFromExtensionRequests = listenToExtensionRequests(
                     taskId, 
-                    creatorId, 
+                    currentUser!.userId, 
                     (updatedMessages) => setMessages(prev => [...prev, ...updatedMessages])
                 );
             } catch (error) {
