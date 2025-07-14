@@ -13,7 +13,6 @@ import {
     TimelineExtensionResponse,
     UpdateTaskBountyDto,
 } from "../models/task.model";
-import { AddCommentDto, CommentDto, UpdateCommentDto } from "../models/comment.model";
 import { MessageResponse, MessageWithDataResponse, PaginatedResponse } from "../models/_global";
 
 export class TaskAPI {
@@ -67,18 +66,6 @@ export class TaskAPI {
     static async replyTimelineModification(taskId: string, data: ReplyTimelineExtensionRequestDto) {
         return HttpClient.post<TimelineExtensionResponse>(ENDPOINTS.TASK.REPLY_TIMELINE_MODIFICATION
             .replace("{taskId}", taskId), data);
-    }
-
-    static async addTaskComment(taskId: string, data: AddCommentDto) {
-        return HttpClient.post<CommentDto>(ENDPOINTS.TASK.ADD_COMMENT.replace("{taskId}", taskId), data);
-    }
-
-    static async updateTaskComment(taskId: string, commentId: string, data: UpdateCommentDto) {
-        return HttpClient.patch<CommentDto>(ENDPOINTS.TASK.UPDATE_COMMENT
-                .replace("{taskId}", taskId)
-                .replace("{commentId}", commentId), 
-                data
-        );
     }
 
     static async deleteTask(taskId: string) {
