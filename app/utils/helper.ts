@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+import { ErrorResponse } from "../models/_global";
 import { TaskStatus } from "../models/task.model";
 
 export function formatDateTime(isoString: string): string {
@@ -18,6 +20,15 @@ export function formatDate(isoString: string): string {
         day: 'numeric', 
         month: 'long', 
         year: 'numeric' 
+    });
+}
+
+export function formatTime(isoString: string): string {
+    const date = new Date(isoString);
+    return date.toLocaleTimeString('en-GB', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
     });
 }
 
@@ -99,4 +110,17 @@ export function taskStatusFormatter(status: TaskStatus) {
         default:
             return status;
     }
+}
+
+export const openInNewTab = (url: string) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
+};
+
+export const handleApiError = (err: any, altMessage: string) => {
+    const error = err as unknown as ErrorResponse;
+    if (error.error.message) {
+        toast.error(error.error.message);
+        return
+    }
+    toast.error(altMessage);
 }
