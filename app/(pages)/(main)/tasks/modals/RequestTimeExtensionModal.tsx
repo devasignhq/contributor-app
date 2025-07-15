@@ -50,6 +50,7 @@ const RequestTimeExtensionModal = ({ toggleModal }: RequestTimeExtensionModalPro
                 );
                 
                 toast.success("Request sent successfully.");
+                toggleModal();
             } catch (error) {
                 handleApiError(error, "Failed to submit task. Please try again.");
             } finally {
