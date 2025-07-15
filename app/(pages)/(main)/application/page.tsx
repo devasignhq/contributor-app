@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 import ButtonPrimary from "@/app/components/ButtonPrimary";
 import RequestResponseModal from "@/app/components/RequestResponseModal";
@@ -19,7 +20,7 @@ const Application = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [activeTask, setActiveTask] = useState<TaskDto | null>(null);
-    const [loadingTask, setLoadingTask] = useState(false);
+    const [loadingTask, setLoadingTask] = useState(true);
     const [submittingApplication, setSubmittingApplication] = useState(false);
     const [openRequestResponseModal, { toggle: toggleRequestResponseModal }] = useToggle(false);
 
@@ -27,6 +28,7 @@ const Application = () => {
         const taskId = searchParams.get("taskId");
         if (!taskId) {
             setActiveTask(null);
+            setLoadingTask(false);
             return;
         }
 
@@ -34,8 +36,6 @@ const Application = () => {
         if (!user) {
             router.push(ROUTES.AUTHENTICATE + `?taskId=${taskId}`);
         }
-
-        setLoadingTask(true);
 
         try {
             const task = await TaskAPI.getTaskById(taskId);
@@ -80,7 +80,7 @@ const Application = () => {
                 <p className="text-body-medium text-light-100 mt-10">Task not found</p>
             )}
 
-            {(loadingTask && activeTask) && (
+            {(loadingTask && !activeTask) && (
                 <p className="text-body-medium text-light-100 mt-10">Loading Task...</p>
             )}
 
@@ -102,7 +102,7 @@ const Application = () => {
                         <div className="w-full flex justify-between gap-2.5 text-headline-small">
                             <h5 className="text-light-100 truncate">{activeTask.issue.title}</h5>
                             <p className="text-primary-400 whitespace-nowrap">
-                                {activeTask.timeline} {activeTask.timelineType?.toLowerCase()}(s)
+                                {formatTimeline(activeTask)}
                             </p>
                         </div>
                         <div className="w-full flex items-center gap-2.5">
@@ -133,7 +133,7 @@ const Application = () => {
                         </p>
                     </section>
                     <p className="text-body-tiny text-light-200">
-                        You’d be prompted to login with your GitHub account to accept this task. 
+                        You’d be prompted to login with your GitHub account to accept this task if you're not authnticated. 
                         You can chat with the project maintainer and receive payouts seamlessly from the platform.
                     </p>
                     <ButtonPrimary
@@ -164,3 +164,35 @@ const Application = () => {
 }
  
 export default Application;
+
+function formatTimeline(task: TaskDto) {
+    if (!Number.isInteger(task.timeline!)) {
+        const [weeks, days] = task.timeline!.toString().split(".");
+        const totalDays = (Number(weeks) * 7) + Number(days);
+        return formatTimeLeft(totalDays);
+    }
+
+    return `${task.timeline} ${task.timelineType?.toLowerCase()}(s)`;
+}
+
+const formatTimeLeft = (totalDays: number): string => {
+    const weeks = Math.floor(totalDays / 7);
+    const days = totalDays % 7;
+
+    const parts: string[] = [];
+
+    if (weeks > 0) {
+        parts.push(`${weeks} week${weeks !== 1 ? '(s)' : ''}`);
+    }
+
+    if (days > 0) {
+        parts.push(`${days} day${days !== 1 ? '(s)' : ''}`);
+    }
+
+    // If no time left (shouldn't happen due to overdue check, but safety)
+    if (parts.length === 0) {
+        return "Less than 1 day";
+    }
+
+    return parts.join(' ');
+};
