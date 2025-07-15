@@ -1,7 +1,9 @@
-import { MessageDto } from "@/app/models/message.model";
+import { MessageDto, MessageType } from "@/app/models/message.model";
 import { getTaskMessages, listenToExtensionRequests, listenToTaskMessages } from "@/app/services/message.service";
 import useUserStore from "@/app/state-management/useUserStore";
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useEffectOnce } from "@/app/utils/hooks";
+import { useState, useEffect, useMemo, useRef, useContext } from "react";
+import { ActiveTaskContext } from "../../page";
 
 export interface GroupedMessages {
     [dateLabel: string]: MessageDto[];
@@ -9,6 +11,7 @@ export interface GroupedMessages {
 
 export const useManageMessages = (taskId: string, creatorId: string) => {
     const { currentUser } = useUserStore();
+    const { activeTask, setActiveTask } = useContext(ActiveTaskContext);
     const messageBoxRef = useRef<HTMLDivElement>(null);
     const [messages, setMessages] = useState<MessageDto[]>([]);
     const [loading, setLoading] = useState(true);
@@ -20,8 +23,8 @@ export const useManageMessages = (taskId: string, creatorId: string) => {
         return getOrderedDateLabels(groupedMessages)
     }, [groupedMessages]);
 
-    useEffect(() => {
-        if (!taskId) return;
+    useEffectOnce(() => {
+        if (!taskId || !creatorId || !currentUser) return;
 
         let unsubscribeFromTaskMessages: (() => void) | null = null;
         let unsubscribeFromExtensionRequests: (() => void) | null = null;
@@ -32,18 +35,37 @@ export const useManageMessages = (taskId: string, creatorId: string) => {
                 setMessages(initialMessages);
                 setLoading(false);
 
-                if (!creatorId) return;
-
                 unsubscribeFromTaskMessages = listenToTaskMessages(
                     taskId, 
                     creatorId, 
-                    (getLastContributorMessage(messages, creatorId)?.createdAt)?.toDate().toISOString() || "", 
-                    (updatedMessages) => setMessages(prev => [...prev, ...updatedMessages])
+                    (getLastUserMessage(initialMessages, creatorId)?.createdAt)?.toDate().toISOString() || "", 
+                    (updatedMessages) => {
+                        if (updatedMessages.length > 0) {
+                            const latestMessage = updatedMessages[updatedMessages.length - 1];
+                            setMessages(prev => [...prev, latestMessage]);
+
+                            if (latestMessage?.type === MessageType.TIMELINE_MODIFICATION &&
+                                latestMessage?.metadata?.reason === "ACCEPTED"
+                            ) {
+                                setActiveTask({ 
+                                    ...activeTask!,
+                                    timeline: latestMessage?.metadata?.requestedTimeline,
+                                    timelineType: latestMessage?.metadata?.timelineType,
+                                    updatedAt: latestMessage?.createdAt?.toDate()?.toISOString()
+                                })
+                            }
+                        }
+                    }
                 );
                 unsubscribeFromExtensionRequests = listenToExtensionRequests(
                     taskId, 
-                    currentUser!.userId, 
-                    (updatedMessages) => setMessages(prev => [...prev, ...updatedMessages])
+                    currentUser.userId, 
+                    (getLastUserMessage(initialMessages, currentUser.userId)?.createdAt)?.toDate().toISOString() || "",
+                    (updatedMessages) => {
+                        if (updatedMessages.length > 0) {
+                            setMessages(prev => [...prev, updatedMessages[updatedMessages.length - 1]]);
+                        }
+                    }
                 );
             } catch (error) {
                 console.error('Failed to load messages:', error);
@@ -57,16 +79,16 @@ export const useManageMessages = (taskId: string, creatorId: string) => {
             if (unsubscribeFromTaskMessages) unsubscribeFromTaskMessages();
             if (unsubscribeFromExtensionRequests) unsubscribeFromExtensionRequests();
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [creatorId, taskId]);
+    }, [creatorId, currentUser, taskId]);
 
     useEffect(() => {
         if (messageBoxRef.current) {
             messageBoxRef.current.scrollTop = messageBoxRef.current.scrollHeight;
         }
-    }, [orderedDateLabels]);
+    }, [groupedMessages.length, messages.length]);
 
     return {
+        messageBoxRef,
         messages,
         groupedMessages,
         orderedDateLabels,
@@ -158,9 +180,9 @@ export const getOrderedDateLabels = (groupedMessages: GroupedMessages): string[]
     });
 };
 
-const getLastContributorMessage = (messages: MessageDto[], creatorId: string) => {
+const getLastUserMessage = (messages: MessageDto[], userId: string) => {
     for (let i = messages.length - 1; i >= 0; i--) {
-        if (messages[i].userId === creatorId) {
+        if (messages[i].userId === userId) {
             return messages[i];
         }
     }

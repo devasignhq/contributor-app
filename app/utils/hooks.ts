@@ -1,6 +1,6 @@
 import { useToggle, useClickAway } from "ahooks";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
-import { useRef } from "react";
+import { DependencyList, EffectCallback, useEffect, useRef } from "react";
 import useUserStore from "../state-management/useUserStore";
 
 export function useCustomSearchParams() {
@@ -53,3 +53,14 @@ export function useClearStores() {
         clearUserStore();
     };
 }
+
+export function useEffectOnce(effect: EffectCallback, deps?: DependencyList) {
+    const hasRun = useRef(false);
+
+    useEffect(() => {
+        if (hasRun.current) return;
+        hasRun.current = true;
+        effect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, deps);
+};
