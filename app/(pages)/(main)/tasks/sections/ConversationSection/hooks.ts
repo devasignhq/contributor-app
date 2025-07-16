@@ -176,7 +176,7 @@ export const getOrderedDateLabels = (groupedMessages: GroupedMessages): string[]
         const dateB = messagesB[0].createdAt.toDate();
         
         // Sort newest first (descending)
-        return dateB.getTime() - dateA.getTime();
+        return dateA.getTime() - dateB.getTime();
     });
 };
 
