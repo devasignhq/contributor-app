@@ -44,5 +44,6 @@ export type UserPayloadDto = {
 }
 
 export type QueryUserDto = {
-    view: "basic" | "full" | "profile"
+    view: "basic" | "full"
+    setWallet?: "true"
 }

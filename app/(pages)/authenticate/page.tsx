@@ -47,7 +47,9 @@ const Account = () => {
 
     const { loading: fetchingUser, run: getUser } = useRequest(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        useLockFn((gitHubUsername: string) => UserAPI.getUser({ view: "basic" })), 
+        useLockFn((gitHubUsername: string) => UserAPI.getUser(
+            { view: "basic", setWallet: "true" }
+        )), 
         {
             manual: true,
             cacheKey: "user-object",
