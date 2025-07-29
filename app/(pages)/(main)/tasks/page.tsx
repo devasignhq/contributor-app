@@ -13,6 +13,7 @@ import { useCustomSearchParams } from "@/app/utils/hooks";
 import { Data } from "ahooks/lib/useInfiniteScroll/types";
 import TaskCard from "./components/TaskCard";
 import { HiOutlineRefresh } from "react-icons/hi";
+import { PaginationResponse } from "@/app/models/_global";
 
 export const ActiveTaskContext = createContext<{
     activeTask: TaskDto | null;
@@ -34,7 +35,7 @@ const Tasks = () => {
         reload: reloadTasks,
     } = useInfiniteScroll<Data>(
         async (currentData) => {
-            const pageToLoad = currentData ? currentData.pagination.page + 1 : 1;
+            const pageToLoad = currentData ? (currentData.pagination as PaginationResponse).currentPage + 1 : 1;
             
             const response = await TaskAPI.getTasks(
                 { 
