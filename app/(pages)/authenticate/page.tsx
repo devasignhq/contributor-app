@@ -2,7 +2,6 @@
 "use client";
 import ButtonPrimary from "@/app/components/ButtonPrimary";
 import { ErrorResponse } from "@/app/models/_global";
-import { UserDto } from "@/app/models/user.model";
 import { UserAPI } from "@/app/services/user.service";
 import useUserStore from "@/app/state-management/useUserStore";
 import { ROUTES } from "@/app/utils/data";
@@ -20,11 +19,7 @@ const Account = () => {
     const searchParams = useSearchParams();
     const { setCurrentUser } = useUserStore();
 
-    const onUserSuccess = (data: UserDto | undefined, username: string) => {
-        if (data) {
-            setCurrentUser({ ...data, username });
-        }
-
+    const onUserSuccess = () => {
         const taskId = searchParams.get("taskId");
         if (!taskId) {
             return router.push(ROUTES.TASKS);
@@ -39,7 +34,16 @@ const Account = () => {
             manual: true,
             onSuccess: (data, params) => {
                 toast.success("User created successfully.");
-                onUserSuccess(data, params[0]);
+
+                if (data && "userId" in data) {
+                    setCurrentUser({ ...data, username: params[0] });
+                }
+                if (data && "message" in data) {
+                    setCurrentUser({ ...data.user, username: params[0] });
+                    toast.warn(data.message);
+                }
+
+                onUserSuccess();
             },
             onError: () => toast.error("Failed to create user.")
         }
@@ -53,7 +57,17 @@ const Account = () => {
         {
             manual: true,
             cacheKey: "user-object",
-            onSuccess: (data, params) => onUserSuccess(data, params[0]),
+            onSuccess: (data, params) => {
+                if (data && "userId" in data) {
+                    setCurrentUser({ ...data, username: params[0] });
+                }
+                if (data && "message" in data) {
+                    setCurrentUser({ ...data.user, username: params[0] });
+                    toast.warn(data.message);
+                }
+
+                onUserSuccess();
+            },
             onError: (err, params) => {
                 const error = err as unknown as ErrorResponse;
                 if (error.error.name === "NotFoundError") {

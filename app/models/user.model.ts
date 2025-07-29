@@ -1,3 +1,4 @@
+import { PartialSuccessResponse } from "./_global"
 import { BalanceLineAsset } from "./horizon.model"
 import { InstallationDto } from "./installation.model"
 import { TaskDto, TaskSubmission } from "./task.model"
@@ -47,3 +48,11 @@ export type QueryUserDto = {
     view: "basic" | "full"
     setWallet?: "true"
 }
+
+export type GetUserResponse = UserDto 
+    | PartialSuccessResponse<"user", UserDto> & {
+        walletStatus: { 
+            wallet: boolean;
+            usdcTrustline: boolean; 
+        }
+    }
