@@ -6,7 +6,6 @@ import { HiPlus } from "react-icons/hi";
 import { LiaExchangeAltSolid } from "react-icons/lia";
 import AllTable from "./tables/AllTable";
 import BountyTable from "./tables/BountyTable";
-import TopUpTable from "./tables/TopUpTable";
 import WithdrawalTable from "./tables/WithdrawalTable";
 import SwapTable from "./tables/SwapTable";
 import { useInfiniteScroll, useToggle } from "ahooks";
@@ -23,6 +22,7 @@ const Wallet = () => {
     const { currentUser } = useUserStore();
     const { xlmBalance, usdcBalance } = useStreamAccountBalance(currentUser?.walletAddress, true);
     const [activeTab, setActiveTab] = useState(tabs[0]);
+    const [currentPage, setCurrentPage] = useState(1);
     const [openWithdrawAssetModal, { toggle: toggleWithdrawAssetModal }] = useToggle(false);
     const [openFundWalletModal, { toggle: toggleFundWalletModal }] = useToggle(false);
     const [openSwapAssetModal, { toggle: toggleSwapAssetModal }] = useToggle(false);
@@ -42,7 +42,7 @@ const Wallet = () => {
         reload: reloadTransactions,
     } = useInfiniteScroll<Data>(
         async (currentData) => {
-            const pageToLoad = currentData ? currentData.pagination.page + 1 : 1;
+            const pageToLoad = currentData ? currentPage + 1 : 1;
 
             const category = activeTab.enum === "ALL" 
                 ? "" 
@@ -57,11 +57,14 @@ const Wallet = () => {
                 ...(category && { categories: category })
             });
 
+            setCurrentPage(pageToLoad);
+
             return { 
                 list: response.transactions,
                 hasMore: response.hasMore,
             };
-        }, {
+        }, 
+        {
             isNoMore: (data) => !data?.hasMore,
             reloadDeps: [activeTab]
         }
@@ -159,7 +162,7 @@ const Wallet = () => {
                     loadMore={loadMoreTransactions}
                 />
             )}
-            {activeTab.enum === "TOP_UP" && (
+            {/* {activeTab.enum === "TOP_UP" && (
                 <TopUpTable 
                     data={loadingTransactions ? [] : (transactions?.list || [])}
                     loading={loadingTransactions}
@@ -167,7 +170,7 @@ const Wallet = () => {
                     noMore={noMoreTransactions}
                     loadMore={loadMoreTransactions}
                 />
-            )}
+            )} */}
             {activeTab.enum === "SWAP" && (
                 <SwapTable 
                     data={loadingTransactions ? [] : (transactions?.list || [])}
@@ -214,7 +217,7 @@ export default Wallet;
 const tabs = [
     { title: "All", enum: "ALL" },
     { title: "Bounty", enum: "BOUNTY" },
-    { title: "Top Up", enum: "TOP_UP" },
+    // { title: "Top Up", enum: "TOP_UP" },
     { title: "Swap", enum: "SWAP" },
     { title: "Withdrawal", enum: "WITHDRAWAL" },
 ]
