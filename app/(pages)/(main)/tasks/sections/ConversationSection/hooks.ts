@@ -3,7 +3,7 @@ import { getTaskMessages, listenToExtensionRequests, listenToTaskMessages } from
 import useUserStore from "@/app/state-management/useUserStore";
 import { useEffectOnce } from "@/app/utils/hooks";
 import { useState, useEffect, useMemo, useRef, useContext } from "react";
-import { ActiveTaskContext } from "../../page";
+import { ActiveTaskContext } from "../../contexts/ActiveTaskContext";
 
 export interface GroupedMessages {
     [dateLabel: string]: MessageDto[];
