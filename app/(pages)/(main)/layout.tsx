@@ -7,6 +7,8 @@ import { TbLogout } from "react-icons/tb";
 import { useLogoutUser } from "@/lib/firebase";
 import useUserStore from "@/app/state-management/useUserStore";
 
+export const dynamic = "force-dynamic";
+
 export default function MainLayout({
     children,
 }: Readonly<{
