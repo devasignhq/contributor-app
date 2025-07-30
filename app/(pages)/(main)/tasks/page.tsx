@@ -114,22 +114,23 @@ const Tasks = () => {
                                 </button>
                             </div>
                             <div className="grow pr-5 pb-5 overflow-y-auto space-y-[15px]">
-                                {tasks?.list?.map((task) => (
-                                    <TaskCard
-                                        key={task.id}
-                                        task={task}
-                                        active={(activeTask?.id || searchParams.get("taskId")) === task.id}
-                                        onClick={() => updateSearchParams({ taskId: task.id })}
-                                    />
-                                ))}
+                                {loadingTasks ? (
+                                    <div className="flex justify-center py-4">
+                                        <span className="text-body-medium text-light-100">Loading tasks...</span>
+                                    </div>
+                                ):(
+                                    tasks?.list?.map((task) => (
+                                        <TaskCard
+                                            key={task.id}
+                                            task={task}
+                                            active={(activeTask?.id || searchParams.get("taskId")) === task.id}
+                                            onClick={() => updateSearchParams({ taskId: task.id })}
+                                        />
+                                    ))
+                                )}
                                 {(tasks?.list && tasks.list.length < 1 && !loadingTasks) && (
                                     <div className="flex justify-center py-4">
                                         <span className="text-body-medium text-light-100">No tasks found</span>
-                                    </div>
-                                )}
-                                {(loadingTasks && tasks?.list && tasks.list.length < 1) && (
-                                    <div className="flex justify-center py-4">
-                                        <span className="text-body-medium text-light-100">Loading tasks...</span>
                                     </div>
                                 )}
                                 {loadingMoreTasks && (
@@ -137,7 +138,7 @@ const Tasks = () => {
                                         <span className="text-body-medium text-light-100">Loading more tasks...</span>
                                     </div>
                                 )}
-                                {(!loadingMoreTasks && !noMoreTasks) && (
+                                {(!loadingTasks && !loadingMoreTasks && !noMoreTasks) && (
                                     <button
                                         className="text-body-medium text-light-200 font-bold hover:text-light-100 pt-2.5"
                                         onClick={loadMoreTasks}
