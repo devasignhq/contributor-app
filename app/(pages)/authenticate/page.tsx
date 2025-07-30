@@ -5,22 +5,21 @@ import { ErrorResponse } from "@/app/models/_global";
 import { UserAPI } from "@/app/services/user.service";
 import useUserStore from "@/app/state-management/useUserStore";
 import { ROUTES } from "@/app/utils/data";
-import { auth } from "@/lib/firebase";
-import { signInWithPopup, getAdditionalUserInfo, GithubAuthProvider } from "@firebase/auth";
+import { useCustomSearchParams } from "@/app/utils/hooks";
+import { auth, githubProvider } from "@/lib/firebase";
+import { signInWithPopup, getAdditionalUserInfo } from "@firebase/auth";
 import { useRequest, useLockFn } from "ahooks";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { FaGithub } from "react-icons/fa6";
 import { toast } from "react-toastify";
 
-export const githubProvider = new GithubAuthProvider();
-
 const Account = () => {
     const router = useRouter();
-    const searchParams = useSearchParams();
+    const { searchParams } = useCustomSearchParams();
+    const taskId = searchParams.get("taskId");
     const { setCurrentUser } = useUserStore();
 
     const onUserSuccess = () => {
-        const taskId = searchParams.get("taskId");
         if (!taskId) {
             return router.push(ROUTES.TASKS);
         }
