@@ -1,18 +1,21 @@
 import { useToggle, useClickAway } from "ahooks";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { DependencyList, EffectCallback, useEffect, useRef } from "react";
 import useUserStore from "../state-management/useUserStore";
 
 export function useCustomSearchParams() {
     const router = useRouter();
     const pathname = usePathname();
+    const searchParams = useSearchParams();
 
-    const updateSearchParams = (params: Record<string, string | number | boolean>) => {
+    const updateSearchParams = (params: Record<string, string | number | boolean>, override = false) => {
+        const currentSearchParams = override 
+            ? new URLSearchParams() 
+            : new URLSearchParams(searchParams);
+
         if (Object.keys(params).length === 0) {
             return router.push(pathname);
         }
-
-        const currentSearchParams = new URLSearchParams(window.location.search);
 
         Object.entries(params).forEach(([key, value]) => {
             currentSearchParams.set(key, value.toString());
@@ -27,9 +30,28 @@ export function useCustomSearchParams() {
         router.push(newUrl);
     };
 
-    const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+    const removeSearchParams = (keys: string | string[]) => {
+        const currentSearchParams = new URLSearchParams(searchParams);
+        const keysToRemove = Array.isArray(keys) ? keys : [keys];
 
-    return { searchParams, updateSearchParams };
+        keysToRemove.forEach(key => {
+            currentSearchParams.delete(key);
+        });
+
+        let queryString = "";
+        if (currentSearchParams.size !== 0) {
+            queryString = `?${currentSearchParams.toString()}`;
+        }
+        const newUrl = `${pathname}${queryString}`;
+
+        router.push(newUrl);
+    };
+
+    return {
+        searchParams,
+        updateSearchParams,
+        removeSearchParams
+    };
 }
 
 export function usePopup() {
