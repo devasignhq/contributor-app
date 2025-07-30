@@ -8,8 +8,6 @@ const geistMono = Geist_Mono({
     variable: "--font-geist-mono",
 });
 
-export const dynamic = "force-dynamic";
-
 export default function RootLayout({
     children,
 }: Readonly<{

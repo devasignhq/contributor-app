@@ -6,10 +6,11 @@ import { TaskDto } from "@/app/models/task.model";
 import { TaskAPI } from "@/app/services/task.service";
 import { ROUTES } from "@/app/utils/data";
 import { formatDate, moneyFormat } from "@/app/utils/helper";
+import { useCustomSearchParams } from "@/app/utils/hooks";
 import { getCurrentUser } from "@/lib/firebase";
 import { useAsyncEffect, useLockFn, useToggle } from "ahooks";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FiArrowUpRight } from "react-icons/fi";
 import { GoDotFill } from "react-icons/go";
@@ -18,14 +19,14 @@ import { toast } from "react-toastify";
 
 const Application = () => {
     const router = useRouter();
-    const searchParams = useSearchParams();
+    const { searchParams } = useCustomSearchParams();
+    const taskId = searchParams.get("taskId");
     const [activeTask, setActiveTask] = useState<TaskDto | null>(null);
     const [loadingTask, setLoadingTask] = useState(true);
     const [submittingApplication, setSubmittingApplication] = useState(false);
     const [openRequestResponseModal, { toggle: toggleRequestResponseModal }] = useToggle(false);
 
     useAsyncEffect(useLockFn(async () => {
-        const taskId = searchParams.get("taskId");
         if (!taskId) {
             setActiveTask(null);
             setLoadingTask(false);
@@ -45,7 +46,7 @@ const Application = () => {
         } finally {
             setLoadingTask(false);
         }
-    }), [searchParams]);
+    }), [taskId]);
 
     const handleTaskApplication = async () => {
         if (!activeTask?.id) {
