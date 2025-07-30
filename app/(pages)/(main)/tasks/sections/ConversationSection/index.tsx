@@ -6,7 +6,7 @@ import { FiArrowUp } from "react-icons/fi";
 import { HiPlus } from "react-icons/hi";
 import { createMessage } from "@/app/services/message.service";
 import { toast } from "react-toastify";
-import { ActiveTaskContext } from "../../page";
+import { ActiveTaskContext } from "../../contexts/ActiveTaskContext";
 import { useManageMessages } from "./hooks";
 import MessageBlock from "./MessageBlock";
 import useUserStore from "@/app/state-management/useUserStore";

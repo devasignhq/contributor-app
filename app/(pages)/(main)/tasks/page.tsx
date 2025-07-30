@@ -2,7 +2,7 @@
 import TaskOverviewSection from "./sections/TaskOverviewSection";
 import ConversationSection from "./sections/ConversationSection";
 import { TaskDto } from "@/app/models/task.model";
-import { createContext, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAsyncEffect, useInfiniteScroll, useLockFn } from "ahooks";
 import { TaskAPI } from "@/app/services/task.service";
@@ -14,11 +14,7 @@ import { Data } from "ahooks/lib/useInfiniteScroll/types";
 import TaskCard from "./components/TaskCard";
 import { HiOutlineRefresh } from "react-icons/hi";
 import { PaginationResponse } from "@/app/models/_global";
-
-export const ActiveTaskContext = createContext<{
-    activeTask: TaskDto | null;
-    setActiveTask: React.Dispatch<React.SetStateAction<TaskDto | null>>
-}>({} as any);
+import { ActiveTaskContext } from "./contexts/ActiveTaskContext";
 
 const Tasks = () => {
     const router = useRouter();
@@ -36,10 +32,10 @@ const Tasks = () => {
     } = useInfiniteScroll<Data>(
         async (currentData) => {
             const pageToLoad = currentData ? (currentData.pagination as PaginationResponse).currentPage + 1 : 1;
-            
+
             const response = await TaskAPI.getTasks(
-                { 
-                    role: "contributor", 
+                {
+                    role: "contributor",
                     detailed: true, // TODO: Remove and select what to show based on role (backend)
                     page: pageToLoad,
                     limit: 30,
@@ -50,11 +46,11 @@ const Tasks = () => {
                 updateSearchParams({ taskId: response.data[0].id });
             }
 
-            return { 
+            return {
                 list: response.data,
                 pagination: response.pagination,
             };
-        }, 
+        },
         {
             isNoMore: (data) => !data?.pagination.hasMore,
             reloadDeps: []
@@ -91,7 +87,7 @@ const Tasks = () => {
                                 No Active Task
                             </h2>
                             <p className="text-body-medium text-dark-100 mb-[30px] text-center">
-                                Task will show up here when a bounty is assigned to you. 
+                                Task will show up here when a bounty is assigned to you.
                                 Visit explorer page and apply to open bounties you can handle.
                             </p>
                             <ButtonPrimary
@@ -104,12 +100,12 @@ const Tasks = () => {
                             />
                         </div>
                     </div>
-                ): (
+                ) : (
                     <>
                         <section className="min-w-[366px] w-[12%] h-full flex flex-col">
                             <div className="py-[30px] pr-5 flex items-center justify-between">
                                 <h3 className="text-headline-small text-light-100 ">Active Tasks</h3>
-                                <button 
+                                <button
                                     onClick={reloadTasks}
                                     disabled={loadingTasks || loadingMoreTasks}
                                     className={(loadingTasks || loadingMoreTasks) ? "rotate-loading" : ""}
@@ -142,7 +138,7 @@ const Tasks = () => {
                                     </div>
                                 )}
                                 {(!loadingMoreTasks && !noMoreTasks) && (
-                                    <button 
+                                    <button
                                         className="text-body-medium text-light-200 font-bold hover:text-light-100 pt-2.5"
                                         onClick={loadMoreTasks}
                                     >
@@ -162,8 +158,8 @@ const Tasks = () => {
 
                         {!loadingTask && activeTask && (
                             <>
-                            <ConversationSection />
-                            <TaskOverviewSection />
+                                <ConversationSection />
+                                <TaskOverviewSection />
                             </>
                         )}
                     </>
@@ -172,5 +168,5 @@ const Tasks = () => {
         </div>
     );
 }
- 
+
 export default Tasks;
