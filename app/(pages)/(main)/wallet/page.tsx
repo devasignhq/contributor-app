@@ -2,7 +2,6 @@
 import ButtonPrimary from "@/app/components/ButtonPrimary";
 import { useState } from "react";
 import { FiArrowDownRight } from "react-icons/fi";
-import { HiPlus } from "react-icons/hi";
 import { LiaExchangeAltSolid } from "react-icons/lia";
 import AllTable from "./tables/AllTable";
 import BountyTable from "./tables/BountyTable";
@@ -82,14 +81,14 @@ const Wallet = () => {
                             text="Withdraw"
                             sideItem={<FiArrowDownRight />}
                             attributes={{ onClick: toggleWithdrawAssetModal }}
-                            extendedClassName="bg-primary-400"
+                            // extendedClassName="bg-primary-400"
                         />
-                        <ButtonPrimary
+                        {/* <ButtonPrimary
                             format="SOLID"
                             text="Top Up"
                             sideItem={<HiPlus />}
                             attributes={{ onClick: toggleFundWalletModal }}
-                        />
+                        /> */}
                     </div>
                 </div>
                 <div className="w-full grid grid-cols-2 gap-5">
