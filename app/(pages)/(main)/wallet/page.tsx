@@ -16,8 +16,10 @@ import { moneyFormat } from "@/app/utils/helper";
 import { WalletAPI } from "@/app/services/wallet.service";
 import { Data } from "ahooks/lib/useInfiniteScroll/types";
 import useUserStore from "@/app/state-management/useUserStore";
+import { useUnauthenticatedUserCheck } from "@/lib/firebase";
 
 const Wallet = () => {
+    useUnauthenticatedUserCheck();
     const { currentUser } = useUserStore();
     const { xlmBalance, usdcBalance } = useStreamAccountBalance(currentUser?.walletAddress, true);
     const [activeTab, setActiveTab] = useState(tabs[0]);

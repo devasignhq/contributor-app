@@ -6,15 +6,14 @@ import { UserAPI } from "@/app/services/user.service";
 import useUserStore from "@/app/state-management/useUserStore";
 import { ROUTES } from "@/app/utils/data";
 import { useCustomSearchParams } from "@/app/utils/hooks";
-import { auth, githubProvider } from "@/lib/firebase";
+import { auth, githubProvider, useAuthenticatedUserCheck } from "@/lib/firebase";
 import { signInWithPopup, getAdditionalUserInfo } from "@firebase/auth";
 import { useRequest, useLockFn } from "ahooks";
-import { useRouter } from "next/navigation";
 import { FaGithub } from "react-icons/fa6";
 import { toast } from "react-toastify";
 
 const Account = () => {
-    const router = useRouter();
+    const router = useAuthenticatedUserCheck();
     const { searchParams } = useCustomSearchParams();
     const taskId = searchParams.get("taskId");
     const { setCurrentUser } = useUserStore();

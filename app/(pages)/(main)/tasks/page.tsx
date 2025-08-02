@@ -12,8 +12,10 @@ import TaskCard from "./components/TaskCard";
 import { HiOutlineRefresh } from "react-icons/hi";
 import { PaginationResponse } from "@/app/models/_global";
 import { ActiveTaskContext } from "./contexts/ActiveTaskContext";
+import { useUnauthenticatedUserCheck } from "@/lib/firebase";
 
 const Tasks = () => {
+    useUnauthenticatedUserCheck();
     const { searchParams, updateSearchParams } = useCustomSearchParams();
     const [activeTask, setActiveTask] = useState<TaskDto | null>(null);
     const [loadingTask, setLoadingTask] = useState(false);
