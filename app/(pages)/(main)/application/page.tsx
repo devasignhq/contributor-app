@@ -13,7 +13,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FiArrowUpRight } from "react-icons/fi";
-import { GoDotFill } from "react-icons/go";
+import { GoCodeSquare, GoDotFill } from "react-icons/go";
 import { RiCodeBoxLine } from "react-icons/ri";
 import { toast } from "react-toastify";
 
@@ -75,6 +75,7 @@ const Application = () => {
         <>
         <div className="w-[850px] mt-[65px] mx-auto">
             <h1 className="text-display-large text-light-100">Task Bounty</h1>
+            
             {!searchParams.get("taskId") ? (
                 <p className="text-body-medium text-light-100 mt-10">No task Id found in URL</p>
             ): (!activeTask && !loadingTask) && (
@@ -87,64 +88,84 @@ const Application = () => {
 
             {activeTask && !loadingTask && (
                 <>
-                <div className="flex items-center gap-[15px] mt-[15px] mb-[30px] text-body-medium">
-                    <p>
-                        <span className="text-dark-100">Created By: </span>
-                        <span className="text-light-200 font-bold">{activeTask.creator?.username}</span>
-                    </p>
-                    <GoDotFill className="text-dark-200" />
-                    <p>
-                        <span className="text-dark-100">Date: </span>
-                        <span className="text-light-200 font-bold">{formatDate(activeTask.createdAt)}</span>
-                    </p>
-                </div>
-                <div className="w-full p-5 border border-primary-200 bg-dark-400 space-y-5">
-                    <section className="w-full space-y-2.5">
-                        <div className="w-full flex justify-between gap-2.5 text-headline-small">
-                            <h5 className="text-light-100 truncate">{activeTask.issue.title}</h5>
-                            <p className="text-primary-400 whitespace-nowrap">
-                                {formatTimeline(activeTask)}
+                    <div className="flex items-center gap-[15px] mt-[15px] mb-[30px] text-body-medium">
+                        <p>
+                            <span className="text-dark-100">Created By: </span>
+                            <span className="text-light-200 font-bold">{activeTask.creator?.username}</span>
+                        </p>
+                        <GoDotFill className="text-dark-200" />
+                        <p>
+                            <span className="text-dark-100">Date: </span>
+                            <span className="text-light-200 font-bold">{formatDate(activeTask.createdAt)}</span>
+                        </p>
+                    </div>
+                    {!activeTask.contributorId ? (
+                        <div className="w-full p-5 border border-primary-200 bg-dark-400 space-y-5">
+                            <section className="w-full space-y-2.5">
+                                <div className="w-full flex justify-between gap-2.5 text-headline-small">
+                                    <h5 className="text-light-100 truncate">{activeTask.issue.title}</h5>
+                                    <p className="text-primary-400 whitespace-nowrap">
+                                        {formatTimeline(activeTask)}
+                                    </p>
+                                </div>
+                                <div className="w-full flex items-center gap-2.5">
+                                    {activeTask.issue.labels?.length > 0 && (
+                                        <p className="py-0.5 px-[7px] bg-primary-300 text-body-tiny font-bold text-light-200 max-w-[35%] truncate">
+                                            {activeTask.issue.labels
+                                                .map(label => label.name)
+                                                .map((name, index, array) => 
+                                                    index === array.length - 1 ? name : `${name}, `
+                                                )
+                                                .join('')}
+                                        </p>
+                                    )}
+                                    <Link 
+                                        href={activeTask.issue.url}
+                                        target="_blank" 
+                                        className="text-body-medium text-dark-100 underline truncate hover:text-light-200"
+                                    >
+                                        {activeTask.issue.url}
+                                    </Link>
+                                </div>
+                            </section>
+                            <section className="space-y-2.5">
+                                <h6 className="text-body-medium text-dark-100">Task Bounty:</h6>
+                                <p className="text-primary-400">
+                                    <span className="text-display-large">{moneyFormat(activeTask.bounty).split(".")[0]}</span>
+                                    <span className="text-headline-large">.{activeTask.bounty.toString().split(".")[1] || "00"} USDC</span>
+                                </p>
+                            </section>
+                            <p className="text-body-tiny text-light-200">
+                                You’d be prompted to login with your GitHub account to accept this task if you're not authnticated. 
+                                You can chat with the project maintainer and receive payouts seamlessly from the platform.
+                            </p>
+                            <ButtonPrimary
+                                format="SOLID"
+                                text={submittingApplication ? "Applying..." : "Apply for Task"}
+                                sideItem={<FiArrowUpRight />}
+                                attributes={{ onClick: handleTaskApplication }}
+                                extendedClassName="bg-light-200"
+                            />
+                        </div>
+                    ):(
+                        <div className="w-full py-10 border border-primary-200 bg-dark-400 space-y-5 text-center">
+                            <GoCodeSquare className="text-[40px] text-primary-400 mx-auto" />
+                            <p className="text-body-medium text-light-200 my-5">
+                                This task bounty has already been <br /> delegated to another developer. 
+                            </p>
+                            <ButtonPrimary
+                                format="OUTLINE"
+                                text="Sign Up"
+                                attributes={{
+                                    onClick: () => router.push(ROUTES.AUTHENTICATE),
+                                }}
+                                extendedClassName="w-fit mx-auto"
+                            />
+                            <p className="text-body-micro text-dark-100 mt-2.5">
+                                Get notified when similar bounties are available
                             </p>
                         </div>
-                        <div className="w-full flex items-center gap-2.5">
-                            {activeTask.issue.labels?.length > 0 && (
-                                <p className="py-0.5 px-[7px] bg-primary-300 text-body-tiny font-bold text-light-200 max-w-[35%] truncate">
-                                    {activeTask.issue.labels
-                                        .map(label => label.name)
-                                        .map((name, index, array) => 
-                                            index === array.length - 1 ? name : `${name}, `
-                                        )
-                                        .join('')}
-                                </p>
-                            )}
-                            <Link 
-                                href={activeTask.issue.url}
-                                target="_blank" 
-                                className="text-body-medium text-dark-100 underline truncate hover:text-light-200"
-                            >
-                                {activeTask.issue.url}
-                            </Link>
-                        </div>
-                    </section>
-                    <section className="space-y-2.5">
-                        <h6 className="text-body-medium text-dark-100">Task Bounty:</h6>
-                        <p className="text-primary-400">
-                            <span className="text-display-large">{moneyFormat(activeTask.bounty).split(".")[0]}</span>
-                            <span className="text-headline-large">.{activeTask.bounty.toString().split(".")[1] || "00"} USDC</span>
-                        </p>
-                    </section>
-                    <p className="text-body-tiny text-light-200">
-                        You’d be prompted to login with your GitHub account to accept this task if you're not authnticated. 
-                        You can chat with the project maintainer and receive payouts seamlessly from the platform.
-                    </p>
-                    <ButtonPrimary
-                        format="SOLID"
-                        text={submittingApplication ? "Applying..." : "Apply for Task"}
-                        sideItem={<FiArrowUpRight />}
-                        attributes={{ onClick: handleTaskApplication }}
-                        extendedClassName="bg-light-200"
-                    />
-                </div>
+                    )}
                 </>
             )}
         </div>
