@@ -3,11 +3,8 @@ import TaskOverviewSection from "./sections/TaskOverviewSection";
 import ConversationSection from "./sections/ConversationSection";
 import { TaskDto } from "@/app/models/task.model";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useAsyncEffect, useInfiniteScroll, useLockFn } from "ahooks";
 import { TaskAPI } from "@/app/services/task.service";
-import ButtonPrimary from "@/app/components/ButtonPrimary";
-import { ROUTES } from "@/app/utils/data";
 import { FiFilePlus } from "react-icons/fi";
 import { useCustomSearchParams } from "@/app/utils/hooks";
 import { Data } from "ahooks/lib/useInfiniteScroll/types";
@@ -17,7 +14,6 @@ import { PaginationResponse } from "@/app/models/_global";
 import { ActiveTaskContext } from "./contexts/ActiveTaskContext";
 
 const Tasks = () => {
-    const router = useRouter();
     const { searchParams, updateSearchParams } = useCustomSearchParams();
     const [activeTask, setActiveTask] = useState<TaskDto | null>(null);
     const [loadingTask, setLoadingTask] = useState(false);
@@ -87,17 +83,17 @@ const Tasks = () => {
                                 No Active Task
                             </h2>
                             <p className="text-body-medium text-dark-100 mb-[30px] text-center">
-                                Task will show up here when a bounty is assigned to you.
-                                Visit explorer page and apply to open bounties you can handle.
+                                Tasks will show up here when a bounty is assigned to you.
+                                {/* Visit explorer page and apply to open bounties you can handle. */}
                             </p>
-                            <ButtonPrimary
+                            {/* <ButtonPrimary
                                 format="OUTLINE"
                                 text="Go To Bounty Explorer"
                                 attributes={{
                                     onClick: () => router.push(ROUTES.EXPLORER),
                                 }}
                                 extendedClassName="w-fit mx-auto"
-                            />
+                            /> */}
                         </div>
                     </div>
                 ) : (
