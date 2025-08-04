@@ -7,14 +7,14 @@ import { MdOutlineCancel } from "react-icons/md";
 
 type MessageBlockProps = {
     message: MessageDto;
-    largeMargin: boolean;
+    margin: string;
 }
 
-const MessageBlock = ({ message, largeMargin }: MessageBlockProps) => {
+const MessageBlock = ({ message, margin }: MessageBlockProps) => {
     const { currentUser } = useUserStore();
 
     return message.type === MessageType.GENERAL ? (
-        <div className={`max-w-[78%] w-fit p-[15px] space-y-2.5 ${largeMargin ? "mb-[30px]" : "mb-2.5"} 
+        <div className={`max-w-[78%] w-fit p-[15px] space-y-2.5 ${margin} 
             ${message.userId === currentUser?.userId 
                 ? "bg-dark-300 ml-auto" 
                 : "bg-primary-300 mr-auto"}`
@@ -27,7 +27,7 @@ const MessageBlock = ({ message, largeMargin }: MessageBlockProps) => {
     ):(
         <>
             {message.userId === currentUser?.userId && (
-                <div className={`max-w-[78%] w-fit space-y-2.5 ml-auto ${largeMargin ? "mb-[30px]" : "mb-2.5"}`}>
+                <div className={`max-w-[78%] w-fit space-y-2.5 ml-auto ${margin}`}>
                     <div className="max-w-full w-fit p-[15px] ml-auto bg-dark-400 border border-dark-300 space-y-5">
                         <p className="text-body-medium text-light-100">
                             You requested for an extension of{" "}
@@ -51,7 +51,7 @@ const MessageBlock = ({ message, largeMargin }: MessageBlockProps) => {
                 </div>
             )}
             {message.userId !== currentUser?.userId && (
-                <div className={`max-w-[78%] w-fit mr-auto p-2.5 bg-dark-400 border flex items-center gap-2.5 ${largeMargin ? "mb-[30px]" : "mb-2.5"} 
+                <div className={`max-w-[78%] w-fit mr-auto p-2.5 bg-dark-400 border flex items-center gap-2.5 ${margin} 
                     ${message.metadata?.reason === "ACCEPTED" ? "border-indicator-100" : "border-indicator-500"}`
                 }>
                     {message.metadata?.reason === "ACCEPTED" ? (

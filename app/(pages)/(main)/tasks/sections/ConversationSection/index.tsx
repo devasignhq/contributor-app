@@ -21,6 +21,7 @@ const ConversationSection = () => {
 
     const {
         messageBoxRef,
+        messages,
         groupedMessages,
         orderedDateLabels,
         loadingInitialMessages,
@@ -92,7 +93,13 @@ const ConversationSection = () => {
                                         <MessageBlock
                                             key={message.id}
                                             message={message}
-                                            largeMargin={groupedMessages[dateLabel][index + 1]?.userId !== message.userId}
+                                            margin={
+                                                messages[messages.length - 1].id === message.id
+                                                    ? "mb-0"
+                                                    : groupedMessages[dateLabel][index + 1]?.userId !== message.userId
+                                                        ? "mb-[30px]"
+                                                        : "mb-2.5"
+                                            }
                                         />
                                     ))}
                                 </div>
