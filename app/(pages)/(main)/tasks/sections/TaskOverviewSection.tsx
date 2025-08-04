@@ -74,7 +74,9 @@ const TaskOverviewSection = () => {
                 <div className="space-y-2.5">
                     <p className="text-body-tiny text-light-100">Time Left</p>
                     <div className="flex items-center gap-5">
-                        <p className="text-body-large text-light-200">{getTimeLeft(activeTask!)}</p>
+                        <p className={`text-body-large ${getTimeLeft(activeTask!).startsWith('Overdue') ? 'text-indicator-500' : 'text-light-200'}`}>
+                            {getTimeLeft(activeTask!)}
+                        </p>
                         <button 
                             onClick={toggleRequestTimeExtensionModal} 
                             className="group text-primary-100 flex items-center gap-[5px]"
@@ -178,7 +180,8 @@ export const getTimeLeft = (task: TaskDto): string => {
 
     // If the deadline has passed, return overdue message
     if (timeDiff <= 0) {
-        return "Overdue";
+        const overdueDays = Math.ceil(Math.abs(timeDiff) / (1000 * 60 * 60 * 24));
+        return `Overdue by ${formatTimeLeft(overdueDays)}`;
     }
 
     // Convert milliseconds to days
