@@ -4,7 +4,7 @@ import { MessageType } from "@/app/models/message.model";
 import { useContext, useRef, useState } from "react";
 import { FiArrowUp } from "react-icons/fi";
 import { HiPlus } from "react-icons/hi";
-import { createMessage } from "@/app/services/message.service";
+import { MessageAPI } from "@/app/services/message.service";
 import { toast } from "react-toastify";
 import { ActiveTaskContext } from "../../contexts/ActiveTaskContext";
 import { useManageMessages } from "./hooks";
@@ -39,7 +39,7 @@ const ConversationSection = () => {
         setSendingMessage(true);
 
         try {
-            const newMessage = await createMessage({
+            const newMessage = await MessageAPI.createMessage({
                 userId: currentUser!.userId,
                 taskId: activeTask!.id,
                 type: MessageType.GENERAL,

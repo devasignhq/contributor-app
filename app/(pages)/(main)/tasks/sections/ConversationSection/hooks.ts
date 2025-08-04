@@ -1,5 +1,5 @@
 import { MessageDto, MessageType } from "@/app/models/message.model";
-import { getTaskMessages, listenToExtensionRequests, listenToTaskMessages } from "@/app/services/message.service";
+import { MessageAPI } from "@/app/services/message.service";
 import useUserStore from "@/app/state-management/useUserStore";
 import { useEffectOnce } from "@/app/utils/hooks";
 import { useState, useEffect, useMemo, useRef, useContext } from "react";
@@ -31,11 +31,11 @@ export const useManageMessages = (taskId: string, creatorId: string) => {
         
         const initializeMessages = async () => {
             try {
-                const initialMessages = await getTaskMessages(taskId);
+                const initialMessages = await MessageAPI.getTaskMessages(taskId);
                 setMessages(initialMessages);
                 setLoading(false);
 
-                unsubscribeFromTaskMessages = listenToTaskMessages(
+                unsubscribeFromTaskMessages = MessageAPI.listenToTaskMessages(
                     taskId, 
                     creatorId, 
                     (getLastUserMessage(initialMessages, creatorId)?.createdAt)?.toDate().toISOString() || "", 
@@ -57,7 +57,7 @@ export const useManageMessages = (taskId: string, creatorId: string) => {
                         }
                     }
                 );
-                unsubscribeFromExtensionRequests = listenToExtensionRequests(
+                unsubscribeFromExtensionRequests = MessageAPI.listenToExtensionRequests(
                     taskId, 
                     currentUser.userId, 
                     (getLastUserMessage(initialMessages, currentUser.userId)?.createdAt)?.toDate().toISOString() || "",
