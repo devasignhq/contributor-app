@@ -2,7 +2,6 @@ import { HttpClient } from "@/lib/axiosInstance";
 import { ENDPOINTS } from "./_endpoints";
 import { 
     CreateTaskDto,
-    FilterTasks,
     MarkAsCompleteDto,
     QueryTaskActivityDto,
     QueryTaskDto,
@@ -16,12 +15,20 @@ import {
 import { MessageResponse, MessageWithDataResponse, PaginatedResponse } from "../models/_global";
 
 export class TaskAPI {
-    static async getTasks(query?: QueryTaskDto, filter?: FilterTasks) {
-        return HttpClient.get<PaginatedResponse<TaskDto>>(ENDPOINTS.TASK.GET_ALL, { data: filter, params: query });
+    static async getTasks(query?: QueryTaskDto) {
+        return HttpClient.get<PaginatedResponse<TaskDto>>(ENDPOINTS.TASK.GET_ALL, { params: query });
+    }
+
+    static async getContributorTasks(query?: QueryTaskDto) {
+        return HttpClient.get<PaginatedResponse<TaskDto>>(ENDPOINTS.TASK.GET_CONTRIBUTOR_TASKS, { params: query });
     }
 
     static async getTaskById(taskId: string) {
         return HttpClient.get<TaskDto>(ENDPOINTS.TASK.GET_BY_ID.replace("{taskId}", taskId));
+    }
+
+    static async getContributorTaskById(taskId: string) {
+        return HttpClient.get<TaskDto>(ENDPOINTS.TASK.GET_CONTRIBUTOR_TASK_BY_ID.replace("{taskId}", taskId));
     }
 
     static async getTaskActivities(taskId: string, query?: QueryTaskActivityDto) {

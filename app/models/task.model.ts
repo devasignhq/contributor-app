@@ -113,11 +113,11 @@ export type MarkAsCompleteDto = {
 export type QueryTaskDto = {
     status?: TaskStatus
     installationId?: string
-    role?: 'creator' | 'contributor'
     detailed?: boolean
     page?: number
     limit?: number
     sort?: "asc" | "desc"
+    repoUrl?: string
 }
 
 export type QueryTaskActivityDto = {

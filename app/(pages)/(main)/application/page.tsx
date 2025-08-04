@@ -35,7 +35,7 @@ const Application = () => {
 
         const user = await getCurrentUser();
         if (!user) {
-            router.push(ROUTES.AUTHENTICATE + `?taskId=${taskId}`);
+            return router.push(ROUTES.AUTHENTICATE + `?taskId=${taskId}`);
         }
 
         try {

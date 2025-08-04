@@ -31,10 +31,9 @@ const Tasks = () => {
         async (currentData) => {
             const pageToLoad = currentData ? (currentData.pagination as PaginationResponse).currentPage + 1 : 1;
 
-            const response = await TaskAPI.getTasks(
+            const response = await TaskAPI.getContributorTasks(
                 {
-                    role: "contributor",
-                    detailed: true, // TODO: Remove and select what to show based on role (backend)
+                    // detailed: true,
                     page: pageToLoad,
                     limit: 30,
                 },
@@ -65,7 +64,7 @@ const Tasks = () => {
         setLoadingTask(true);
 
         try {
-            const task = await TaskAPI.getTaskById(taskId);
+            const task = await TaskAPI.getContributorTaskById(taskId);
             setActiveTask(task);
         } catch {
             setActiveTask(null);

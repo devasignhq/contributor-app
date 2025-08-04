@@ -14,7 +14,9 @@ export const ENDPOINTS = {
     },
     TASK: {
         GET_ALL: preset.TASK + "",
+        GET_CONTRIBUTOR_TASKS: preset.TASK + "/contributor",
         GET_BY_ID: preset.TASK + "/{taskId}",
+        GET_CONTRIBUTOR_TASK_BY_ID: preset.TASK + "contributor/{taskId}",
         GET_ACTIVITIES: preset.TASK + "/activities/{taskId}",
         CREATE: preset.TASK + "",
         CREATE_MANY: preset.TASK + "/batch",
