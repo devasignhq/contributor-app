@@ -1,14 +1,43 @@
 "use client";
 import { TaskDto } from "@/app/models/task.model";
+import { MessageAPI } from "@/app/services/message.service";
+import useUserStore from "@/app/state-management/useUserStore";
 import { moneyFormat, taskStatusFormatter } from "@/app/utils/helper";
+import { useContext, useState, useMemo, useEffect } from "react";
+import { ActiveTaskContext } from "../contexts/ActiveTaskContext";
 
 type TaskCardProps = {
     task: TaskDto;
-    active?: boolean;
-    onClick?: () => void;
+    active: boolean;
+    onClick: () => void;
 };
 
-const TaskCard = ({ task, active, onClick }: TaskCardProps) => {
+const TaskCard = ({ task: defaultTask, active, onClick }: TaskCardProps) => {
+    const { currentUser } = useUserStore();
+    const { activeTask } = useContext(ActiveTaskContext);
+    const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
+
+    const task = useMemo(() => {
+        if (activeTask && active) {
+            return activeTask;
+        } else {
+            return defaultTask;
+        }
+    }, [active, activeTask, defaultTask]);
+
+    // Listen to unread messages count
+    useEffect(() => {
+        if (!currentUser?.userId || !task.id || !task.contributorId) return;
+
+        const unsubscribe = MessageAPI.listenToUnreadMessagesCount(
+            task.id,
+            currentUser.userId,
+            (count) => setUnreadMessagesCount(count)
+        );
+
+        return () => unsubscribe();
+    }, [task, currentUser?.userId]);
+
     return (
         <div 
             onClick={onClick}
@@ -16,7 +45,9 @@ const TaskCard = ({ task, active, onClick }: TaskCardProps) => {
             className={`w-full p-[15px] border cursor-pointer 
                 ${active 
                     ? "bg-dark-400 border-light-100" 
-                    : "border-primary-200 hover:border-dark-200 hover:bg-dark-400"}
+                    : unreadMessagesCount > 0
+                        ? "border-primary-100 hover:border-dark-200 hover:bg-dark-400"
+                        : "border-primary-200 hover:border-dark-200 hover:bg-dark-400"}
             `}
         >
             <div className="flex items-center gap-1.5">
@@ -31,7 +62,14 @@ const TaskCard = ({ task, active, onClick }: TaskCardProps) => {
                             .join('')}
                     </p>
                 )}
-                <p className="text-body-medium text-primary-400 font-bold ml-auto whitespace-nowrap">{moneyFormat(task.bounty)} USDC</p>
+                <div className="w-fit ml-auto text-body-medium font-bold flex items-center gap-[5px]">
+                    <p className="text-primary-400 whitespace-nowrap">{moneyFormat(task.bounty)} USDC</p>
+                    {(!active && unreadMessagesCount > 0) ? (
+                        <span className="px-[5px] text-body-tiny text-dark-500 bg-primary-100">
+                            {unreadMessagesCount}
+                        </span>
+                    ): null}
+                </div>
             </div>
             <p 
                 className="text-body-medium text-light-100 overflow-hidden leading-5 mt-2.5"

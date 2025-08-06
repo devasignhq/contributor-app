@@ -17,6 +17,7 @@ import { useUnauthenticatedUserCheck } from "@/lib/firebase";
 const Tasks = () => {
     useUnauthenticatedUserCheck();
     const { searchParams, updateSearchParams } = useCustomSearchParams();
+    const taskId = searchParams.get("taskId");
     const [activeTask, setActiveTask] = useState<TaskDto | null>(null);
     const [loadingTask, setLoadingTask] = useState(false);
 
@@ -39,7 +40,7 @@ const Tasks = () => {
                 },
             );
 
-            if (!searchParams.get("taskId") && !activeTask && response.data.length > 0) {
+            if (!taskId && !activeTask && response.data.length > 0) {
                 updateSearchParams({ taskId: response.data[0].id });
             }
 
@@ -55,7 +56,6 @@ const Tasks = () => {
     );
 
     useAsyncEffect(useLockFn(async () => {
-        const taskId = searchParams.get("taskId");
         if (!taskId) {
             setActiveTask(null);
             return;
@@ -71,7 +71,7 @@ const Tasks = () => {
         } finally {
             setLoadingTask(false);
         }
-    }), [searchParams]);
+    }), [taskId]);
 
     return (
         <div className="h-[calc(100dvh-123px)] flex">
@@ -111,19 +111,18 @@ const Tasks = () => {
                                 </button>
                             </div>
                             <div className="grow pr-5 pb-5 overflow-y-auto space-y-[15px]">
-                                {loadingTasks ? (
+                                {tasks?.list?.map((task) => (
+                                    <TaskCard
+                                        key={task.id}
+                                        task={task}
+                                        active={(activeTask?.id || taskId) === task.id}
+                                        onClick={() => updateSearchParams({ taskId: task.id })}
+                                    />
+                                ))}
+                                {(loadingTasks && tasks?.list && tasks.list.length < 1) && (
                                     <div className="flex justify-center py-4">
                                         <span className="text-body-medium text-light-100">Loading tasks...</span>
                                     </div>
-                                ):(
-                                    tasks?.list?.map((task) => (
-                                        <TaskCard
-                                            key={task.id}
-                                            task={task}
-                                            active={(activeTask?.id || searchParams.get("taskId")) === task.id}
-                                            onClick={() => updateSearchParams({ taskId: task.id })}
-                                        />
-                                    ))
                                 )}
                                 {(tasks?.list && tasks.list.length < 1 && !loadingTasks) && (
                                     <div className="flex justify-center py-4">

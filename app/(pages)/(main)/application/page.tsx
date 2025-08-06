@@ -147,7 +147,7 @@ const Application = () => {
                                 extendedClassName="bg-light-200"
                             />
                         </div>
-                    ):(
+                    ) : (
                         <div className="w-full py-10 border border-primary-200 bg-dark-400 space-y-5 text-center">
                             <GoCodeSquare className="text-[40px] text-primary-400 mx-auto" />
                             <p className="text-body-medium text-light-200 my-5">
