@@ -3,7 +3,7 @@ import { TaskDto } from "@/app/models/task.model";
 import { MessageAPI } from "@/app/services/message.service";
 import useUserStore from "@/app/state-management/useUserStore";
 import { moneyFormat, taskStatusFormatter } from "@/app/utils/helper";
-import { useContext, useState, useMemo, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import { ActiveTaskContext } from "../contexts/ActiveTaskContext";
 
 type TaskCardProps = {
@@ -15,15 +15,14 @@ type TaskCardProps = {
 const TaskCard = ({ task: defaultTask, active, onClick }: TaskCardProps) => {
     const { currentUser } = useUserStore();
     const { activeTask } = useContext(ActiveTaskContext);
+    const [task, setTask] = useState(defaultTask);
     const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
 
-    const task = useMemo(() => {
-        if (activeTask && active) {
-            return activeTask;
-        } else {
-            return defaultTask;
-        }
-    }, [active, activeTask, defaultTask]);
+    useEffect(() => {
+        if (activeTask?.id !== task.id) return;
+
+        setTask(prev => ({ ...prev, ...activeTask! }));
+    }, [activeTask, task.id]);
 
     // Listen to unread messages count
     useEffect(() => {

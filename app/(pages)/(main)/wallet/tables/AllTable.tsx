@@ -37,7 +37,7 @@ const AllTable = ({
                             <td className="col-span-3">
                                 {moneyFormat(transaction.fromAmount || "")} {transaction.assetFrom} to {moneyFormat(transaction.toAmount || "")} {transaction.assetTo}
                             </td>
-                        ) : (transaction.category === "TOP_UP") ? (
+                        ) : (transaction.category === "BOUNTY") ? (
                             <td className="col-span-3 text-indicator-100">
                                 {moneyFormat(transaction.amount)} {transaction.asset}
                             </td>
