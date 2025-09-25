@@ -130,24 +130,7 @@ NEXT_PUBLIC_API_BASE_URL="api-url"
 # Start the development server
 npm run dev
 
-# The app will be available at http://localhost:3000
-```
-
-## Running the Application
-
-#### Development Mode
-```bash
-# Start with Turbopack (faster builds)
-npm run dev
-```
-
-#### Production Mode
-```bash
-# Build the application
-npm run build
-
-# Start production server
-npm start
+# The app will be available at http://localhost:4000
 ```
 
 ## Configuration
@@ -163,10 +146,7 @@ npm start
 2. Update `NEXT_PUBLIC_API_BASE_URL` in your `.env.local` to point to your API server
 3. Verify the connection by checking the health endpoint at `/health`
 
-
-<!-- ## 🚀 Deployment -->
-
-<!-- ## 🤝 Contributing -->
+<!-- ## Contributing -->
 
 ## License
 
@@ -181,5 +161,3 @@ DevAsign is open-source software licensed under the Apache 2.0 License. See [LIC
 - [DevAsign API Server](https://github.com/devasignhq/devasign-api) - Backend API and AI engine
 - [DevAsign Project Maintainer App](https://github.com/devasignhq/app.devasign.com) - Frontend for project maintainer
 - [Soroban Task Escrow Contract](https://github.com/devasignhq/soroban-contract) - Task Escrow Management
-
-<!-- ## 💬 Community -->
